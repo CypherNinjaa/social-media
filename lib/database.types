@@ -1,0 +1,164 @@
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+
+export interface Database {
+  public: {
+    Tables: {
+      profiles: {
+        Row: {
+          id: string
+          username: string
+          full_name: string | null
+          avatar_url: string | null
+          bio: string | null
+          website: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          username: string
+          full_name?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          website?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          username?: string
+          full_name?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          website?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      posts: {
+        Row: {
+          id: string
+          user_id: string
+          content: string
+          image_url: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          content: string
+          image_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          content?: string
+          image_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      likes: {
+        Row: {
+          id: string
+          post_id: string
+          user_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          post_id: string
+          user_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          post_id?: string
+          user_id?: string
+          created_at?: string
+        }
+      }
+      comments: {
+        Row: {
+          id: string
+          post_id: string
+          user_id: string
+          content: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          post_id: string
+          user_id: string
+          content: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          post_id?: string
+          user_id?: string
+          content?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      follows: {
+        Row: {
+          id: string
+          follower_id: string
+          following_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          follower_id: string
+          following_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          follower_id?: string
+          following_id?: string
+          created_at?: string
+        }
+      }
+      notifications: {
+        Row: {
+          id: string
+          user_id: string
+          actor_id: string | null
+          type: string
+          post_id: string | null
+          comment_id: string | null
+          is_read: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          actor_id?: string | null
+          type: string
+          post_id?: string | null
+          comment_id?: string | null
+          is_read?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          actor_id?: string | null
+          type?: string
+          post_id?: string | null
+          comment_id?: string | null
+          is_read?: boolean
+          created_at?: string
+        }
+      }
+    }
+  }
+}
