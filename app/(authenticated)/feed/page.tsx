@@ -123,40 +123,6 @@ export default async function FeedPage() {
 
             {/* Suggested users */}
             <SuggestedUsers users={suggestedUsers || []} />
-
-            {/* Footer links */}
-            <div className="mt-8 text-xs text-gray-500 dark:text-gray-400">
-              <div className="flex flex-wrap gap-x-2 gap-y-1 mb-4">
-                <a href="#" className="hover:underline">
-                  About
-                </a>
-                <span>·</span>
-                <a href="#" className="hover:underline">
-                  Help
-                </a>
-                <span>·</span>
-                <a href="#" className="hover:underline">
-                  Press
-                </a>
-                <span>·</span>
-                <a href="#" className="hover:underline">
-                  API
-                </a>
-                <span>·</span>
-                <a href="#" className="hover:underline">
-                  Jobs
-                </a>
-                <span>·</span>
-                <a href="#" className="hover:underline">
-                  Privacy
-                </a>
-                <span>·</span>
-                <a href="#" className="hover:underline">
-                  Terms
-                </a>
-              </div>
-              <p>© 2023 SocialSphere</p>
-            </div>
           </div>
         </div>
       </div>

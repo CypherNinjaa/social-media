@@ -15,265 +15,432 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b bg-white">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 flex items-center justify-center shadow-sm">
-              <span className="text-white font-bold">S</span>
+      <header className="border-b bg-white dark:bg-gray-950 sticky top-0 z-50 backdrop-blur-sm bg-white/80 dark:bg-gray-950/80">
+        <div className="container mx-auto px-4 flex h-16 items-center justify-between relative">
+          <div className="absolute inset-0 left-1/4 w-1/2 h-full bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-blue-500/10 blur-xl"></div>
+          <div className="flex items-center gap-3 z-10">
+            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 flex items-center justify-center shadow-md transform transition-transform hover:scale-110 hover:shadow-lg">
+              <span className="text-white font-bold text-lg">S</span>
             </div>
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">
               SocialSphere
             </span>
           </div>
-          <nav className="hidden md:flex gap-6">
-            <Link href="#features" className="text-sm font-medium hover:text-social-600 transition-colors">
-              Features
+          <nav className="hidden md:flex gap-8 z-10">
+            <Link href="#features" className="text-sm font-medium relative group">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400 group-hover:from-pink-500 group-hover:to-purple-500 transition-all duration-300">
+                Features
+              </span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-pink-500 to-purple-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
-            <Link href="#about" className="text-sm font-medium hover:text-social-600 transition-colors">
-              About
+            <Link href="#about" className="text-sm font-medium relative group">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400 group-hover:from-purple-500 group-hover:to-blue-500 transition-all duration-300">
+                About
+              </span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-blue-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
-            <Link href="/auth" className="text-sm font-medium hover:text-social-600 transition-colors">
-              Sign In
+            <Link href="/auth" className="text-sm font-medium relative group">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400 group-hover:from-blue-500 group-hover:to-teal-500 transition-all duration-300">
+                Sign In
+              </span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-teal-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
           </nav>
+          <button className="md:hidden z-10 p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="4" x2="20" y1="12" y2="12"></line>
+              <line x1="4" x2="20" y1="6" y2="6"></line>
+              <line x1="4" x2="20" y1="18" y2="18"></line>
+            </svg>
+          </button>
         </div>
       </header>
       <main className="flex-1">
         <section className="py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="container px-4 md:px-6">
-            <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:grid-cols-2">
-              <div className="flex flex-col justify-center space-y-4">
-                <div className="space-y-2">
-                  <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                    Connect, Share, Engage with <span className="gradient-text">SocialSphere</span>
+            <div className="relative grid gap-8 lg:grid-cols-2 lg:gap-16 xl:grid-cols-2 overflow-hidden">
+              {/* Animated background elements */}
+              <div className="absolute -top-24 -right-24 w-96 h-96 bg-gradient-to-br from-pink-400 via-purple-500 to-indigo-500 rounded-full opacity-20 blur-3xl animate-pulse"></div>
+              <div
+                className="absolute -bottom-24 -left-24 w-96 h-96 bg-gradient-to-tr from-yellow-400 via-orange-500 to-pink-500 rounded-full opacity-20 blur-3xl animate-pulse"
+                style={{ animationDelay: "2s" }}
+              ></div>
+
+              {/* Content column */}
+              <div className="relative flex flex-col justify-center space-y-6 z-10">
+                <div className="space-y-4">
+                  <div className="inline-block rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1 mb-4">
+                    <span className="block bg-white dark:bg-gray-950 rounded-md px-3 py-1 text-sm font-medium">
+                      Welcome to SocialSphere
+                    </span>
+                  </div>
+                  <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+                    Connect, Share, Engage with{" "}
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">
+                      SocialSphere
+                    </span>
                   </h1>
-                  <p className="max-w-[600px] text-muted-foreground md:text-xl">
+                  <p className="max-w-[600px] text-muted-foreground md:text-xl leading-relaxed">
                     Join our vibrant community where you can connect with friends, share your moments, and engage with
                     content that matters to you.
                   </p>
                 </div>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                <div className="flex flex-col gap-4 min-[400px]:flex-row">
                   <Link href="/auth?tab=register">
-                    <Button size="lg" className="bg-social-600 hover:bg-social-700">
+                    <Button
+                      size="lg"
+                      className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 hover:opacity-90 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                    >
                       Get Started
                     </Button>
                   </Link>
                   <Link href="/auth">
-                    <Button size="lg" variant="outline">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="border-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all transform hover:-translate-y-1"
+                    >
                       Log In
                     </Button>
                   </Link>
                 </div>
               </div>
-              <div className="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last">
-                <div className="h-full w-full bg-gradient-to-br from-social-400 to-social-600 animate-gradient rounded-xl flex items-center justify-center">
-                  <div className="text-white text-4xl font-bold">SocialSphere</div>
+
+              {/* Image column with floating animation */}
+              <div className="relative mx-auto aspect-video overflow-hidden rounded-xl sm:w-full lg:order-last z-10">
+                <div className="h-full w-full bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 rounded-xl flex items-center justify-center shadow-2xl transform hover:scale-[1.02] transition-all duration-300 animate-float">
+                  <div className="relative">
+                    <div className="absolute -top-10 -left-10 w-20 h-20 bg-yellow-400 rounded-full opacity-70 blur-md"></div>
+                    <div className="absolute -bottom-10 -right-10 w-20 h-20 bg-pink-400 rounded-full opacity-70 blur-md"></div>
+                    <div className="text-white text-5xl font-bold drop-shadow-lg">SocialSphere</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
-        <section id="features" className="bg-muted py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <div className="inline-block rounded-lg bg-social-100 px-3 py-1 text-sm text-social-800">Features</div>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Everything You Need</h2>
-                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  SocialSphere provides all the tools you need to connect with friends and share your world.
-                </p>
+        <section id="features" className="relative overflow-hidden py-16 md:py-24 lg:py-32">
+          {/* Background elements */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900"></div>
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-800 to-transparent"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-800 to-transparent"></div>
+
+          {/* Decorative circles */}
+          <div className="absolute top-24 right-10 w-64 h-64 bg-pink-200 dark:bg-pink-900/20 rounded-full opacity-20 blur-3xl"></div>
+          <div className="absolute bottom-24 left-10 w-64 h-64 bg-blue-200 dark:bg-blue-900/20 rounded-full opacity-20 blur-3xl"></div>
+
+          <div className="container relative z-10 px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+              <div className="inline-flex items-center justify-center p-1 bg-white dark:bg-gray-800 rounded-full shadow-md mb-4">
+                <div className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+                  Features
+                </div>
+              </div>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl max-w-3xl">
+                Everything You Need to{" "}
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">
+                  Connect & Share
+                </span>
+              </h2>
+              <p className="max-w-[800px] text-muted-foreground md:text-xl/relaxed">
+                SocialSphere provides all the tools you need to connect with friends and share your world.
+              </p>
+            </div>
+
+            <div className="mx-auto grid max-w-5xl items-center gap-8 py-8 md:grid-cols-3">
+              {/* Feature 1 */}
+              <div className="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-lg transition-all hover:shadow-xl hover:-translate-y-1">
+                <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-pink-500 to-orange-500 transform origin-left scale-x-0 transition-transform group-hover:scale-x-100"></div>
+                <div className="flex flex-col items-center text-center gap-4">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-pink-100 to-orange-100 dark:from-pink-900/20 dark:to-orange-900/20 mb-2 group-hover:scale-110 transition-transform">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="h-10 w-10 text-pink-500"
+                    >
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold">Connect with Friends</h3>
+                  <p className="text-muted-foreground">
+                    Find and connect with friends, family, and like-minded individuals from around the world.
+                  </p>
+                </div>
+              </div>
+
+              {/* Feature 2 */}
+              <div className="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-lg transition-all hover:shadow-xl hover:-translate-y-1">
+                <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-purple-500 to-blue-500 transform origin-left scale-x-0 transition-transform group-hover:scale-x-100"></div>
+                <div className="flex flex-col items-center text-center gap-4">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20 mb-2 group-hover:scale-110 transition-transform">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="h-10 w-10 text-purple-500"
+                    >
+                      <path d="M21 15V6"></path>
+                      <path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"></path>
+                      <path d="M12 12H3"></path>
+                      <path d="M16 6H3"></path>
+                      <path d="M12 18H3"></path>
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold">Share Your World</h3>
+                  <p className="text-muted-foreground">
+                    Post updates, photos, and stories to share your experiences with your network.
+                  </p>
+                </div>
+              </div>
+
+              {/* Feature 3 */}
+              <div className="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-lg transition-all hover:shadow-xl hover:-translate-y-1">
+                <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-blue-500 to-green-500 transform origin-left scale-x-0 transition-transform group-hover:scale-x-100"></div>
+                <div className="flex flex-col items-center text-center gap-4">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-blue-100 to-green-100 dark:from-blue-900/20 dark:to-green-900/20 mb-2 group-hover:scale-110 transition-transform">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="h-10 w-10 text-blue-500"
+                    >
+                      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold">Engage with Content</h3>
+                  <p className="text-muted-foreground">
+                    Like, comment, and interact with posts from your friends and communities.
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3 lg:gap-12">
-              <div className="grid gap-4 text-center">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-social-100 mx-auto">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-10 w-10 text-social-600"
-                  >
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold">Connect with Friends</h3>
-                <p className="text-muted-foreground">
-                  Find and connect with friends, family, and like-minded individuals from around the world.
-                </p>
-              </div>
-              <div className="grid gap-4 text-center">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-social-100 mx-auto">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-10 w-10 text-social-600"
-                  >
-                    <path d="M21 15V6"></path>
-                    <path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"></path>
-                    <path d="M12 12H3"></path>
-                    <path d="M16 6H3"></path>
-                    <path d="M12 18H3"></path>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold">Share Your World</h3>
-                <p className="text-muted-foreground">
-                  Post updates, photos, and stories to share your experiences with your network.
-                </p>
-              </div>
-              <div className="grid gap-4 text-center">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-social-100 mx-auto">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-10 w-10 text-social-600"
-                  >
-                    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold">Engage with Content</h3>
-                <p className="text-muted-foreground">
-                  Like, comment, and interact with posts from your friends and communities.
-                </p>
-              </div>
+
+            <div className="mt-16 flex justify-center">
+              <Link href="/auth?tab=register">
+                <Button className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 hover:opacity-90 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-white px-8 py-2 rounded-full">
+                  Get Started Now
+                </Button>
+              </Link>
             </div>
           </div>
         </section>
       </main>
-      <footer className="border-t bg-white">
-        <div className="container flex flex-col gap-4 py-10 md:flex-row md:gap-8 md:py-12">
-          <div className="flex flex-col gap-2 md:gap-4">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 flex items-center justify-center shadow-sm">
-                <span className="text-white font-bold">S</span>
+      <footer className="border-t bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900">
+        {/* Top decorative line */}
+        <div className="w-full h-1 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500"></div>
+
+        <div className="container mx-auto px-4">
+          {/* Main footer content with improved styling */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 py-12 md:py-16">
+            {/* Brand section */}
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 flex items-center justify-center shadow-md transform transition-transform hover:scale-110">
+                  <span className="text-white font-bold text-lg">S</span>
+                </div>
+                <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500">
+                  SocialSphere
+                </span>
               </div>
-              <span className="text-xl font-bold">SocialSphere</span>
+              <p className="text-sm text-gray-600 dark:text-gray-300 max-w-xs">
+                Connect with friends, share moments, and discover content that matters to you.
+              </p>
+              <div className="flex space-x-4 mt-2">
+                <Link href="#" className="text-gray-500 hover:text-pink-500 transition-colors">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-5 w-5"
+                  >
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                  </svg>
+                  <span className="sr-only">Facebook</span>
+                </Link>
+                <Link href="#" className="text-gray-500 hover:text-purple-500 transition-colors">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-5 w-5"
+                  >
+                    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
+                  </svg>
+                  <span className="sr-only">Twitter</span>
+                </Link>
+                <Link href="#" className="text-gray-500 hover:text-orange-500 transition-colors">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-5 w-5"
+                  >
+                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+                  </svg>
+                  <span className="sr-only">Instagram</span>
+                </Link>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">Connect with friends and share your world.</p>
-          </div>
-          <div className="ml-auto grid gap-8 sm:grid-cols-3">
-            <div className="grid gap-2">
-              <h3 className="text-sm font-medium">Product</h3>
-              <nav className="grid gap-2">
-                <Link href="#" className="text-sm hover:underline">
+
+            {/* Product links */}
+            <div className="flex flex-col gap-4">
+              <h3 className="text-base font-semibold relative">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-500">
+                  Product
+                </span>
+                <span className="absolute -bottom-2 left-0 w-8 h-1 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full"></span>
+              </h3>
+              <nav className="flex flex-col gap-3 mt-2">
+                <Link
+                  href="#"
+                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-pink-500 dark:hover:text-pink-400 transition-colors"
+                >
                   Features
                 </Link>
-                <Link href="#" className="text-sm hover:underline">
+                <Link
+                  href="#"
+                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-pink-500 dark:hover:text-pink-400 transition-colors"
+                >
                   Pricing
                 </Link>
-                <Link href="#" className="text-sm hover:underline">
+                <Link
+                  href="#"
+                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-pink-500 dark:hover:text-pink-400 transition-colors"
+                >
                   FAQ
                 </Link>
               </nav>
             </div>
-            <div className="grid gap-2">
-              <h3 className="text-sm font-medium">Company</h3>
-              <nav className="grid gap-2">
-                <Link href="#" className="text-sm hover:underline">
+
+            {/* Company links */}
+            <div className="flex flex-col gap-4">
+              <h3 className="text-base font-semibold relative">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-blue-500">
+                  Company
+                </span>
+                <span className="absolute -bottom-2 left-0 w-8 h-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"></span>
+              </h3>
+              <nav className="flex flex-col gap-3 mt-2">
+                <Link
+                  href="#"
+                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
+                >
                   About
                 </Link>
-                <Link href="#" className="text-sm hover:underline">
+                <Link
+                  href="#"
+                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
+                >
                   Blog
                 </Link>
-                <Link href="#" className="text-sm hover:underline">
+                <Link
+                  href="#"
+                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
+                >
                   Careers
                 </Link>
               </nav>
             </div>
-            <div className="grid gap-2">
-              <h3 className="text-sm font-medium">Legal</h3>
-              <nav className="grid gap-2">
-                <Link href="#" className="text-sm hover:underline">
+
+            {/* Legal links */}
+            <div className="flex flex-col gap-4">
+              <h3 className="text-base font-semibold relative">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-500">Legal</span>
+                <span className="absolute -bottom-2 left-0 w-8 h-1 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full"></span>
+              </h3>
+              <nav className="flex flex-col gap-3 mt-2">
+                <Link
+                  href="#"
+                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                >
                   Privacy
                 </Link>
-                <Link href="#" className="text-sm hover:underline">
+                <Link
+                  href="#"
+                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                >
                   Terms
                 </Link>
-                <Link href="#" className="text-sm hover:underline">
+                <Link
+                  href="#"
+                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                >
                   Contact
                 </Link>
               </nav>
             </div>
           </div>
         </div>
-        <div className="border-t py-6">
-          <div className="container flex flex-col items-center justify-between gap-4 md:flex-row">
-            <p className="text-sm text-muted-foreground">© 2025 SocialSphere. All rights reserved.</p>
-            <div className="flex gap-4">
-              <Link href="#" className="text-muted-foreground hover:text-foreground">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-5 w-5"
-                >
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                </svg>
-                <span className="sr-only">Facebook</span>
+
+        {/* Copyright section */}
+        <div className="border-t border-gray-200 dark:border-gray-800">
+          <div className="container mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between">
+            <p className="text-sm text-gray-500 dark:text-gray-400">© 2025 SocialSphere. All rights reserved.</p>
+            <div className="mt-4 md:mt-0">
+              <Link
+                href="#"
+                className="text-sm text-gray-500 dark:text-gray-400 hover:text-pink-500 dark:hover:text-pink-400 transition-colors"
+              >
+                Privacy Policy
               </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-5 w-5"
-                >
-                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
-                </svg>
-                <span className="sr-only">Twitter</span>
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-5 w-5"
-                >
-                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
-                </svg>
-                <span className="sr-only">Instagram</span>
+              <span className="mx-2 text-gray-400">•</span>
+              <Link
+                href="#"
+                className="text-sm text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
+              >
+                Terms of Service
               </Link>
             </div>
           </div>

@@ -74,7 +74,7 @@ export function DesktopSidebar({ userId, username, avatar }: DesktopSidebarProps
       </div>
 
       <nav className="flex-1 px-2 py-4">
-        <div className="space-y-1">
+        <div className="space-y-2">
           {navItems.map((item) => {
             const isActive = item.href === "/feed" ? pathname === "/feed" : pathname.startsWith(item.href)
 
@@ -82,14 +82,38 @@ export function DesktopSidebar({ userId, username, avatar }: DesktopSidebarProps
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex items-center px-3 py-3 rounded-md transition-colors ${
+                className={`flex items-center px-4 py-3 rounded-xl transition-all duration-200 group relative overflow-hidden ${
                   isActive
-                    ? "bg-gray-100 dark:bg-gray-800 text-black dark:text-white font-medium"
-                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    ? "bg-gradient-to-r from-purple-500/10 to-blue-500/10 text-purple-600 dark:text-purple-400 font-medium"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/50"
                 }`}
               >
-                <item.icon className="h-6 w-6" />
-                <span className="ml-3 hidden lg:inline-block">{item.name}</span>
+                <div
+                  className={`relative z-10 flex items-center justify-center w-9 h-9 rounded-lg ${
+                    isActive
+                      ? "bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-md"
+                      : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 group-hover:scale-110 transition-transform duration-200"
+                  }`}
+                >
+                  <item.icon
+                    className={`h-5 w-5 ${isActive ? "animate-pulse-subtle" : "group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors"}`}
+                  />
+                </div>
+                <span
+                  className={`ml-3 hidden lg:inline-block relative ${
+                    isActive
+                      ? "font-medium"
+                      : "group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors"
+                  }`}
+                >
+                  {item.name}
+                  {isActive && (
+                    <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"></span>
+                  )}
+                </span>
+                {isActive && (
+                  <span className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-blue-500/5 rounded-xl"></span>
+                )}
               </Link>
             )
           })}

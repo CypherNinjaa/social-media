@@ -2,14 +2,28 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { formatDistanceToNow } from "date-fns"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { createClient } from "@/lib/supabase/client"
-import { Heart, MessageCircle, Bookmark, Send, MoreHorizontal } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal } from "lucide-react"
+import { useToast } from "@/components/ui/use-toast"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { Flag, Pencil, Trash2 } from "lucide-react"
 
 interface PostCardProps {
   post: any
@@ -17,17 +31,40 @@ interface PostCardProps {
   likes: number
   isLiked: boolean
   comments: any[]
+  commentsCount: number
+  session: any
 }
 
-export function PostCard({ post, currentUserId, likes, isLiked, comments }: PostCardProps) {
+export function PostCard({ post, currentUserId, likes, isLiked, comments, commentsCount, session }: PostCardProps) {
+  const router = useRouter()
+  const { toast } = useToast()
+  const [saved, setSaved] = useState(false)
   const [isLikedState, setIsLikedState] = useState(isLiked)
   const [likesCount, setLikesCount] = useState(likes)
-  const [isSaved, setIsSaved] = useState(false)
   const [commentText, setCommentText] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [localComments, setLocalComments] = useState(comments)
   const [showAllComments, setShowAllComments] = useState(false)
   const supabase = createClient()
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+
+  // Check if post is saved when component mounts
+  useEffect(() => {
+    if (session?.user.id) {
+      const checkSavedStatus = async () => {
+        const { data } = await supabase
+          .from("saved_posts")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .eq("post_id", post.id)
+          .single()
+
+        setSaved(!!data)
+      }
+
+      checkSavedStatus()
+    }
+  }, [session, post.id, supabase])
 
   const handleLike = async () => {
     const newIsLiked = !isLikedState
@@ -45,11 +82,6 @@ export function PostCard({ post, currentUserId, likes, isLiked, comments }: Post
         post_id: post.id,
       })
     }
-  }
-
-  const handleSave = () => {
-    setIsSaved(!isSaved)
-    // Implement save functionality
   }
 
   const handleSubmitComment = async (e: React.FormEvent) => {
@@ -104,9 +136,43 @@ export function PostCard({ post, currentUserId, likes, isLiked, comments }: Post
           </Avatar>
           <span className="font-semibold text-sm">{post.user.username}</span>
         </Link>
-        <button>
-          <MoreHorizontal className="h-5 w-5" />
-        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button aria-label="More options">
+              <MoreHorizontal className="h-5 w-5" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {post.user_id === currentUserId ? (
+              <>
+                <DropdownMenuItem onClick={() => router.push(`/edit-post/${post.id}`)} className="cursor-pointer">
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Edit Post
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setShowDeleteDialog(true)}
+                  className="cursor-pointer text-red-600 focus:text-red-600"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete Post
+                </DropdownMenuItem>
+              </>
+            ) : (
+              <DropdownMenuItem
+                onClick={() => {
+                  toast({
+                    title: "Post reported",
+                    description: "Thank you for reporting this post. We'll review it shortly.",
+                  })
+                }}
+                className="cursor-pointer"
+              >
+                <Flag className="h-4 w-4 mr-2" />
+                Report Post
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Post image */}
@@ -124,29 +190,106 @@ export function PostCard({ post, currentUserId, likes, isLiked, comments }: Post
       <div className="p-3">
         <div className="flex justify-between mb-2">
           <div className="flex space-x-4">
-            <button onClick={handleLike}>
-              <Heart
-                className={`h-6 w-6 ${isLikedState ? "text-red-500 fill-red-500" : "text-gray-700 dark:text-gray-300"}`}
-              />
+            <button
+              onClick={handleLike}
+              className="flex items-center space-x-1 text-sm"
+              aria-label={isLiked ? "Unlike post" : "Like post"}
+            >
+              <Heart className={`h-5 w-5 ${isLikedState ? "fill-rose-500 text-rose-500" : "text-gray-500"}`} />
+              <span>{likesCount}</span>
             </button>
-            <button>
-              <MessageCircle className="h-6 w-6 text-gray-700 dark:text-gray-300" />
+
+            <button
+              onClick={() => router.push(`/post/${post.id}#comments`)}
+              className="flex items-center space-x-1 text-sm text-gray-500 hover:text-gray-700"
+              aria-label="Comment on post"
+            >
+              <MessageCircle className="h-5 w-5" />
+              <span>{commentsCount}</span>
             </button>
-            <button>
-              <Send className="h-6 w-6 text-gray-700 dark:text-gray-300" />
+
+            <button
+              onClick={() => {
+                if (navigator.share) {
+                  navigator
+                    .share({
+                      title: `Post by ${post.profile?.username || "User"}`,
+                      text: post.content.substring(0, 100) + (post.content.length > 100 ? "..." : ""),
+                      url: `${window.location.origin}/post/${post.id}`,
+                    })
+                    .catch((err) => {
+                      console.error("Error sharing:", err)
+                      // Fallback for desktop
+                      navigator.clipboard.writeText(`${window.location.origin}/post/${post.id}`)
+                      toast({
+                        title: "Link copied to clipboard",
+                        description: "You can now share it with others",
+                      })
+                    })
+                } else {
+                  // Fallback for browsers that don't support sharing
+                  navigator.clipboard.writeText(`${window.location.origin}/post/${post.id}`)
+                  toast({
+                    title: "Link copied to clipboard",
+                    description: "You can now share it with others",
+                  })
+                }
+              }}
+              className="flex items-center space-x-1 text-sm text-gray-500 hover:text-gray-700"
+              aria-label="Share post"
+            >
+              <Share2 className="h-5 w-5" />
             </button>
           </div>
-          <button onClick={handleSave}>
-            <Bookmark
-              className={`h-6 w-6 ${
-                isSaved ? "text-black fill-black dark:text-white dark:fill-white" : "text-gray-700 dark:text-gray-300"
-              }`}
-            />
+
+          <button
+            onClick={async () => {
+              try {
+                const { data, error } = await supabase
+                  .from("saved_posts")
+                  .select("*")
+                  .eq("user_id", session?.user.id)
+                  .eq("post_id", post.id)
+                  .single()
+
+                if (data) {
+                  // Post is already saved, so unsave it
+                  await supabase.from("saved_posts").delete().eq("user_id", session?.user.id).eq("post_id", post.id)
+                  toast({
+                    title: "Post removed from saved",
+                    description: "The post has been removed from your saved collection",
+                  })
+                  setSaved(false)
+                } else {
+                  // Post is not saved, so save it
+                  await supabase.from("saved_posts").insert({
+                    user_id: session?.user.id,
+                    post_id: post.id,
+                  })
+                  toast({
+                    title: "Post saved",
+                    description: "The post has been added to your saved collection",
+                  })
+                  setSaved(true)
+                }
+              } catch (error) {
+                console.error("Error toggling save status:", error)
+                toast({
+                  title: "Error",
+                  description: "Failed to save post. Please try again.",
+                  variant: "destructive",
+                })
+              }
+            }}
+            className="flex items-center text-sm text-gray-500 hover:text-gray-700"
+            aria-label={saved ? "Unsave post" : "Save post"}
+          >
+            {saved ? <Bookmark className="h-5 w-5 fill-current" /> : <Bookmark className="h-5 w-5" />}
           </button>
         </div>
 
         {/* Likes count */}
-        <div className="font-semibold text-sm mb-1">{likesCount} likes</div>
+        {/* <div className="font-semibold text-sm mb-1">{likesCount} likes</div> */}
 
         {/* Caption */}
         <div className="mb-2">
@@ -200,6 +343,48 @@ export function PostCard({ post, currentUserId, likes, isLiked, comments }: Post
           </Button>
         </form>
       </div>
+      {/* Delete confirmation dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your post and remove it from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                try {
+                  // Delete the post
+                  const { error } = await supabase.from("posts").delete().eq("id", post.id).eq("user_id", currentUserId)
+
+                  if (error) throw error
+
+                  toast({
+                    title: "Post deleted",
+                    description: "Your post has been successfully deleted.",
+                  })
+
+                  // Refresh the page or update the UI
+                  router.refresh()
+                } catch (error) {
+                  console.error("Error deleting post:", error)
+                  toast({
+                    title: "Error",
+                    description: "Failed to delete post. Please try again.",
+                    variant: "destructive",
+                  })
+                }
+              }}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

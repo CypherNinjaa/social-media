@@ -8,18 +8,31 @@ import Link from "next/link"
 
 export default async function ProfilePage({ params }: { params: { username: string } }) {
   const supabase = createClient()
+  const username = params.username
 
   // Get current user
   const {
     data: { session },
   } = await supabase.auth.getSession()
 
-  // Get profile by username
-  const { data: profile } = await supabase.from("profiles").select("*").eq("username", params.username).single()
+  // Fetch profile data with counts
+  const { data: profile } = await supabase.from("profiles").select("*").eq("username", username).single()
 
   if (!profile) {
     notFound()
   }
+
+  // Get followers count
+  const { count: followersCount } = await supabase
+    .from("follows")
+    .select("*", { count: "exact", head: true })
+    .eq("following_id", profile.id)
+
+  // Get following count
+  const { count: followingCount } = await supabase
+    .from("follows")
+    .select("*", { count: "exact", head: true })
+    .eq("follower_id", profile.id)
 
   // Check if current user is following this profile
   let isFollowing = false
@@ -33,17 +46,6 @@ export default async function ProfilePage({ params }: { params: { username: stri
 
     isFollowing = !!followData
   }
-
-  // Get follower and following counts
-  const { count: followersCount } = await supabase
-    .from("follows")
-    .select("*", { count: "exact", head: true })
-    .eq("following_id", profile.id)
-
-  const { count: followingCount } = await supabase
-    .from("follows")
-    .select("*", { count: "exact", head: true })
-    .eq("follower_id", profile.id)
 
   // Get user's posts
   const { data: posts } = await supabase
@@ -100,18 +102,29 @@ export default async function ProfilePage({ params }: { params: { username: stri
 
           {/* Stats */}
           <div className="flex justify-center md:justify-start space-x-8 mb-4">
-            <div>
+            <Link
+              href={`/profile/${username}/posts`}
+              className="flex flex-col items-center md:items-start cursor-pointer hover:opacity-80 transition-opacity"
+            >
               <span className="font-semibold">{posts?.length || 0}</span>{" "}
               <span className="text-gray-500 dark:text-gray-400">posts</span>
-            </div>
-            <div>
+            </Link>
+
+            <Link
+              href={`/profile/${username}/followers`}
+              className="flex flex-col items-center md:items-start cursor-pointer hover:opacity-80 transition-opacity"
+            >
               <span className="font-semibold">{followersCount || 0}</span>{" "}
               <span className="text-gray-500 dark:text-gray-400">followers</span>
-            </div>
-            <div>
+            </Link>
+
+            <Link
+              href={`/profile/${username}/following`}
+              className="flex flex-col items-center md:items-start cursor-pointer hover:opacity-80 transition-opacity"
+            >
               <span className="font-semibold">{followingCount || 0}</span>{" "}
               <span className="text-gray-500 dark:text-gray-400">following</span>
-            </div>
+            </Link>
           </div>
 
           {/* Bio */}

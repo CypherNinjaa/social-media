@@ -1,0 +1,250 @@
+"use client"
+
+import type React from "react"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { createClient } from "@/lib/supabase/client"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { toast } from "@/components/ui/use-toast"
+import { Loader2, ImageIcon, X, AlertCircle } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useEffect } from "react"
+
+export default function CreatePostPage() {
+  const [content, setContent] = useState("")
+  const [image, setImage] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [profile, setProfile] = useState<any>(null)
+  const [loadingProfile, setLoadingProfile] = useState(true)
+  const router = useRouter()
+  const supabase = createClient()
+
+  useEffect(() => {
+    async function getProfile() {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+
+        if (!user) {
+          router.push("/auth")
+          return
+        }
+
+        const { data } = await supabase.from("profiles").select("*").eq("id", user.id).single()
+
+        setProfile(data)
+      } catch (error) {
+        console.error("Error loading profile:", error)
+      } finally {
+        setLoadingProfile(false)
+      }
+    }
+
+    getProfile()
+  }, [supabase, router])
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError("Image size should be less than 5MB")
+        return
+      }
+
+      setImage(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const removeImage = () => {
+    setImage(null)
+    setImagePreview(null)
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!content.trim() && !image) {
+      setError("Post cannot be empty")
+      return
+    }
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      if (!user) {
+        router.push("/auth")
+        return
+      }
+
+      let imageUrl = null
+
+      // Upload image if exists
+      if (image) {
+        const fileExt = image.name.split(".").pop()
+        const fileName = `${Date.now()}.${fileExt}`
+        const filePath = `${user.id}/${fileName}`
+
+        const { error: uploadError } = await supabase.storage.from("post-images").upload(filePath, image)
+
+        if (uploadError) {
+          throw uploadError
+        }
+
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from("post-images").getPublicUrl(filePath)
+
+        imageUrl = publicUrl
+      }
+
+      // Create post
+      const { error: postError } = await supabase.from("posts").insert({
+        user_id: user.id,
+        content: content.trim(),
+        image_url: imageUrl,
+      })
+
+      if (postError) {
+        throw postError
+      }
+
+      toast({
+        title: "Success",
+        description: "Your post has been created",
+      })
+
+      // Redirect to feed
+      router.push("/feed")
+      router.refresh()
+    } catch (error: any) {
+      setError(error.message || "Failed to create post")
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create post",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loadingProfile) {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="container max-w-2xl py-8">
+      <Card className="border-none shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-2xl">Create Post</CardTitle>
+        </CardHeader>
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-6">
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            <div className="flex items-start gap-4">
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.username} />
+                <AvatarFallback>{profile?.username?.charAt(0).toUpperCase()}</AvatarFallback>
+              </Avatar>
+
+              <div className="flex-1 space-y-4">
+                <Textarea
+                  placeholder="What's on your mind?"
+                  className="min-h-[150px] resize-none text-lg"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                />
+
+                {imagePreview && (
+                  <div className="relative mt-2 rounded-md overflow-hidden">
+                    <img
+                      src={imagePreview || "/placeholder.svg"}
+                      alt="Preview"
+                      className="max-h-[300px] w-full object-cover rounded-md"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-2 right-2 h-8 w-8 rounded-full"
+                      onClick={removeImage}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="border-t pt-4">
+              <Label htmlFor="image-upload" className="block mb-2">
+                Add to your post
+              </Label>
+              <div className="flex items-center gap-4">
+                <div>
+                  <Label
+                    htmlFor="image-upload"
+                    className="flex items-center gap-2 px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                  >
+                    <ImageIcon className="h-5 w-5 text-primary" />
+                    <span>Image</span>
+                  </Label>
+                  <Input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+
+          <CardFooter className="flex justify-end border-t pt-4">
+            <Button type="submit" disabled={loading || (!content.trim() && !image)} className="px-8">
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Posting...
+                </>
+              ) : (
+                "Post"
+              )}
+            </Button>
+          </CardFooter>
+        </form>
+      </Card>
+    </div>
+  )
+}
