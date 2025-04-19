@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Home, Search, PlusSquare, Heart, MessageCircle } from "lucide-react"
+import { Home, Search, PlusSquare, Heart } from "lucide-react"
 
 interface MobileNavigationProps {
   userId: string
@@ -28,11 +28,6 @@ export function MobileNavigation({ userId, avatar }: MobileNavigationProps) {
       href: "/create",
       icon: PlusSquare,
       label: "Create",
-    },
-    {
-      href: "/messages",
-      icon: MessageCircle,
-      label: "Messages",
     },
     {
       href: "/notifications",

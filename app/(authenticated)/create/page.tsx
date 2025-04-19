@@ -157,94 +157,109 @@ export default function CreatePostPage() {
   }
 
   return (
-    <div className="container max-w-2xl py-8">
-      <Card className="border-none shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-2xl">Create Post</CardTitle>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-6">
-            {error && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+    <div className="container max-w-3xl py-12 px-4 sm:px-6">
+      <div className="relative">
+        {/* Decorative elements */}
+        <div className="absolute -top-10 -left-10 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
 
-            <div className="flex items-start gap-4">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.username} />
-                <AvatarFallback>{profile?.username?.charAt(0).toUpperCase()}</AvatarFallback>
-              </Avatar>
+        <Card className="border-none shadow-2xl bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5 pointer-events-none" />
 
-              <div className="flex-1 space-y-4">
-                <Textarea
-                  placeholder="What's on your mind?"
-                  className="min-h-[150px] resize-none text-lg"
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                />
-
-                {imagePreview && (
-                  <div className="relative mt-2 rounded-md overflow-hidden">
-                    <img
-                      src={imagePreview || "/placeholder.svg"}
-                      alt="Preview"
-                      className="max-h-[300px] w-full object-cover rounded-md"
-                    />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="icon"
-                      className="absolute top-2 right-2 h-8 w-8 rounded-full"
-                      onClick={removeImage}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
-              </div>
+          <CardHeader className="relative z-10">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-1 w-6 rounded-full bg-gradient-to-r from-purple-500 to-blue-500" />
+              <div className="h-1 w-3 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 opacity-60" />
             </div>
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
+              Create Post
+            </CardTitle>
+            <p className="text-muted-foreground mt-1">Share your thoughts with the world</p>
+          </CardHeader>
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-6">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
 
-            <div className="border-t pt-4">
-              <Label htmlFor="image-upload" className="block mb-2">
-                Add to your post
-              </Label>
-              <div className="flex items-center gap-4">
-                <div>
-                  <Label
-                    htmlFor="image-upload"
-                    className="flex items-center gap-2 px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transition-colors"
-                  >
-                    <ImageIcon className="h-5 w-5 text-primary" />
-                    <span>Image</span>
-                  </Label>
-                  <Input
-                    id="image-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageChange}
+              <div className="flex items-start gap-4">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.username} />
+                  <AvatarFallback>{profile?.username?.charAt(0).toUpperCase()}</AvatarFallback>
+                </Avatar>
+
+                <div className="flex-1 space-y-4">
+                  <Textarea
+                    placeholder="What's on your mind?"
+                    className="min-h-[150px] resize-none text-lg"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
                   />
+
+                  {imagePreview && (
+                    <div className="relative mt-2 rounded-md overflow-hidden">
+                      <img
+                        src={imagePreview || "/placeholder.svg"}
+                        alt="Preview"
+                        className="max-h-[300px] w-full object-cover rounded-md"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-2 right-2 h-8 w-8 rounded-full"
+                        onClick={removeImage}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          </CardContent>
 
-          <CardFooter className="flex justify-end border-t pt-4">
-            <Button type="submit" disabled={loading || (!content.trim() && !image)} className="px-8">
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Posting...
-                </>
-              ) : (
-                "Post"
-              )}
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
+              <div className="border-t pt-4">
+                <Label htmlFor="image-upload" className="block mb-2">
+                  Add to your post
+                </Label>
+                <div className="flex items-center gap-4">
+                  <div>
+                    <Label
+                      htmlFor="image-upload"
+                      className="flex items-center gap-2 px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                    >
+                      <ImageIcon className="h-5 w-5 text-primary" />
+                      <span>Image</span>
+                    </Label>
+                    <Input
+                      id="image-upload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageChange}
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+
+            <CardFooter className="flex justify-end border-t pt-4">
+              <Button type="submit" disabled={loading || (!content.trim() && !image)} className="px-8">
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Posting...
+                  </>
+                ) : (
+                  "Post"
+                )}
+              </Button>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
     </div>
   )
 }

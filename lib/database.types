@@ -1,139 +1,133 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export interface Database {
   public: {
     Tables: {
       profiles: {
         Row: {
-          id: string
-          username: string
-          full_name: string | null
-          avatar_url: string | null
-          bio: string | null
-          website: string | null
-          created_at: string
-          updated_at: string
-        }
+          id: string;
+          username: string;
+          full_name: string | null;
+          avatar_url: string | null;
+          bio: string | null;
+          website: string | null;
+          created_at: string;
+          updated_at: string;
+        };
         Insert: {
-          id: string
-          username: string
-          full_name?: string | null
-          avatar_url?: string | null
-          bio?: string | null
-          website?: string | null
-          created_at?: string
-          updated_at?: string
-        }
+          id: string;
+          username: string;
+          full_name?: string | null;
+          avatar_url?: string | null;
+          bio?: string | null;
+          website?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: {
-          id?: string
-          username?: string
-          full_name?: string | null
-          avatar_url?: string | null
-          bio?: string | null
-          website?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-      }
+          id?: string;
+          username?: string;
+          full_name?: string | null;
+          avatar_url?: string | null;
+          bio?: string | null;
+          website?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       posts: {
         Row: {
-          id: string
-          user_id: string
-          content: string
-          image_url: string | null
-          created_at: string
-          updated_at: string
-        }
+          id: string;
+          user_id: string;
+          content: string;
+          image_url: string | null;
+          created_at: string;
+          updated_at: string;
+        };
         Insert: {
-          id?: string
-          user_id: string
-          content: string
-          image_url?: string | null
-          created_at?: string
-          updated_at?: string
-        }
+          id?: string;
+          user_id: string;
+          content: string;
+          image_url?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: {
-          id?: string
-          user_id?: string
-          content?: string
-          image_url?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-      }
+          id?: string;
+          user_id?: string;
+          content?: string;
+          image_url?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       likes: {
         Row: {
-          id: string
-          post_id: string
-          user_id: string
-          created_at: string
-        }
+          id: string;
+          post_id: string;
+          user_id: string;
+          created_at: string;
+        };
         Insert: {
-          id?: string
-          post_id: string
-          user_id: string
-          created_at?: string
-        }
+          id?: string;
+          post_id: string;
+          user_id: string;
+          created_at?: string;
+        };
         Update: {
-          id?: string
-          post_id?: string
-          user_id?: string
-          created_at?: string
-        }
-      }
+          id?: string;
+          post_id?: string;
+          user_id?: string;
+          created_at?: string;
+        };
+      };
       comments: {
         Row: {
-          id: string
-          post_id: string
-          user_id: string
-          content: string
-          created_at: string
-          updated_at: string
-        }
+          id: string;
+          post_id: string;
+          user_id: string;
+          content: string;
+          created_at: string;
+          updated_at: string;
+        };
         Insert: {
-          id?: string
-          post_id: string
-          user_id: string
-          content: string
-          created_at?: string
-          updated_at?: string
-        }
+          id?: string;
+          post_id: string;
+          user_id: string;
+          content: string;
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: {
-          id?: string
-          post_id?: string
-          user_id?: string
-          content?: string
-          created_at?: string
-          updated_at?: string
-        }
-      }
+          id?: string;
+          post_id?: string;
+          user_id?: string;
+          content?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       follows: {
         Row: {
-          id: string
-          follower_id: string
-          following_id: string
-          created_at: string
-        }
+          id: string;
+          follower_id: string;
+          following_id: string;
+          created_at: string;
+        };
         Insert: {
-          id?: string
-          follower_id: string
-          following_id: string
-          created_at?: string
-        }
+          id?: string;
+          follower_id: string;
+          following_id: string;
+          created_at?: string;
+        };
         Update: {
-          id?: string
-          follower_id?: string
-          following_id?: string
-          created_at?: string
-        }
-      }
-      notifications: {
+          id?: string;
+          follower_id?: string;
+          following_id?: string;
+          created_at?: string;
+        };
+      };
+       notifications: {
         Row: {
           id: string
           user_id: string
@@ -303,7 +297,7 @@ export interface Database {
           content: string
           created_at: string
           updated_at: string
-          image_url: string
+          image_url: string | null
           rank: number
           headline: string
         }[]

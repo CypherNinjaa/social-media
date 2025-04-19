@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Loader2, Search } from "lucide-react"
-import { getOrCreateConversation } from "@/app/actions/messaging"
+import { toast } from "@/components/ui/use-toast"
+import { createConversationAction } from "@/app/actions/create-conversation"
 
 interface NewMessageDialogProps {
   onClose: () => void
@@ -56,11 +57,27 @@ export function NewMessageDialog({ onClose }: NewMessageDialogProps) {
   const handleStartConversation = async (userId: string) => {
     try {
       setIsCreating(true)
-      const conversationId = await getOrCreateConversation(userId)
-      router.push(`/messages/${conversationId}`)
-      onClose()
-    } catch (error) {
+
+      // Use the server action to create the conversation
+      const result = await createConversationAction(userId)
+
+      if (result.error) {
+        throw new Error(result.error)
+      }
+
+      if (result.conversationId) {
+        router.push(`/messages/${result.conversationId}`)
+        onClose()
+      } else {
+        throw new Error("No conversation ID returned")
+      }
+    } catch (error: any) {
       console.error("Error creating conversation:", error)
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create conversation. Please try again.",
+        variant: "destructive",
+      })
     } finally {
       setIsCreating(false)
     }

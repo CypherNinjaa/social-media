@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal } from "lucide-react"
+import { Heart, Share2, Bookmark, MoreHorizontal } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import {
@@ -123,7 +123,7 @@ export function PostCard({ post, currentUserId, likes, isLiked, comments, commen
     }
   }
 
-  const displayedComments = showAllComments ? localComments : localComments.slice(0, 2)
+  const displayedComments = showAllComments ? localComments : localComments.slice(0, 1)
 
   return (
     <div className="bg-white dark:bg-gray-950 border rounded-md overflow-hidden">
@@ -200,11 +200,9 @@ export function PostCard({ post, currentUserId, likes, isLiked, comments, commen
             </button>
 
             <button
-              onClick={() => router.push(`/post/${post.id}#comments`)}
               className="flex items-center space-x-1 text-sm text-gray-500 hover:text-gray-700"
               aria-label="Comment on post"
             >
-              <MessageCircle className="h-5 w-5" />
               <span>{commentsCount}</span>
             </button>
 
@@ -297,17 +295,39 @@ export function PostCard({ post, currentUserId, likes, isLiked, comments, commen
           <span className="text-sm">{post.content}</span>
         </div>
 
+        {/* Add a dedicated comment button */}
+        {localComments.length > 0 && (
+          <button
+            onClick={() => setShowAllComments(!showAllComments)}
+            className="flex items-center space-x-1 text-sm text-gray-500 hover:text-gray-700 mb-2"
+            aria-label={showAllComments ? "Hide comments" : "Show comments"}
+          >
+            <span className="font-medium">
+              {showAllComments ? "Hide" : "View"} {localComments.length > 1 ? "all " : ""}
+              {localComments.length} {localComments.length === 1 ? "comment" : "comments"}
+            </span>
+          </button>
+        )}
+
         {/* Comments */}
         {localComments.length > 0 && (
           <div className="mb-2">
-            {localComments.length > 2 && !showAllComments && (
+            {localComments.length > 1 && !showAllComments ? (
               <button
-                className="text-sm text-gray-500 dark:text-gray-400 mb-1"
+                className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1 hover:text-gray-700 dark:hover:text-gray-300"
                 onClick={() => setShowAllComments(true)}
               >
                 View all {localComments.length} comments
               </button>
-            )}
+            ) : showAllComments && localComments.length > 3 ? (
+              <button
+                className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1 hover:text-gray-700 dark:hover:text-gray-300"
+                onClick={() => setShowAllComments(false)}
+              >
+                Show less
+              </button>
+            ) : null}
+
             {displayedComments.map((comment: any) => (
               <div key={comment.id} className="text-sm mb-1">
                 <span className="font-semibold mr-1">{comment.user.username}</span>

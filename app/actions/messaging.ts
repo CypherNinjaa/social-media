@@ -141,16 +141,60 @@ export async function getOrCreateConversation(otherUserId: string): Promise<stri
     throw new Error("Not authenticated")
   }
 
-  const { data, error } = await supabase.rpc("get_or_create_conversation", {
-    user1_id: session.user.id,
-    user2_id: otherUserId,
-  })
+  try {
+    // First check if a conversation already exists between these users
+    const { data: existingConversations } = await supabase
+      .from("conversation_participants")
+      .select("conversation_id")
+      .eq("user_id", session.user.id)
 
-  if (error) {
+    if (existingConversations && existingConversations.length > 0) {
+      const conversationIds = existingConversations.map((c) => c.conversation_id)
+
+      const { data: sharedConversations } = await supabase
+        .from("conversation_participants")
+        .select("conversation_id")
+        .eq("user_id", otherUserId)
+        .in("conversation_id", conversationIds)
+
+      if (sharedConversations && sharedConversations.length > 0) {
+        // Found an existing conversation
+        return sharedConversations[0].conversation_id
+      }
+    }
+
+    // No existing conversation found, create a new one
+    const { data: newConversation, error: conversationError } = await supabase
+      .from("conversations")
+      .insert({})
+      .select()
+      .single()
+
+    if (conversationError || !newConversation) {
+      throw new Error("Failed to create conversation")
+    }
+
+    // Add participants
+    const { error: participantsError } = await supabase.from("conversation_participants").insert([
+      {
+        conversation_id: newConversation.id,
+        user_id: session.user.id,
+      },
+      {
+        conversation_id: newConversation.id,
+        user_id: otherUserId,
+      },
+    ])
+
+    if (participantsError) {
+      throw new Error("Failed to add participants to conversation")
+    }
+
+    return newConversation.id
+  } catch (error) {
+    console.error("Error in getOrCreateConversation:", error)
     throw new Error("Failed to get or create conversation")
   }
-
-  return data
 }
 
 export async function getMessages(conversationId: string): Promise<Message[]> {

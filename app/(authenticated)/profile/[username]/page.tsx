@@ -3,9 +3,8 @@ import { notFound } from "next/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Grid3X3, Bookmark, Settings } from "lucide-react"
+import { Grid3X3, Bookmark, Settings, MessageSquare } from "lucide-react"
 import Link from "next/link"
-import { startConversationWithUser } from "@/app/actions/start-conversation"
 
 export default async function ProfilePage({ params }: { params: { username: string } }) {
   const supabase = createClient()
@@ -94,11 +93,12 @@ export default async function ProfilePage({ params }: { params: { username: stri
                     {isFollowing ? "Following" : "Follow"}
                   </Button>
                 </form>
-                <form action={startConversationWithUser.bind(null, profile.id)}>
-                  <Button variant="outline" size="sm" className="font-semibold" type="submit">
+                <Link href={`/messages?user=${profile.id}`}>
+                  <Button variant="outline" size="sm" className="font-semibold">
+                    <MessageSquare className="h-4 w-4 mr-2" />
                     Message
                   </Button>
-                </form>
+                </Link>
               </div>
             )}
           </div>

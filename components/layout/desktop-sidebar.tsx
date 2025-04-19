@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Home, Search, PlusSquare, Heart, MessageCircle, User, Settings, LogOut, Instagram } from "lucide-react"
+import { Home, Search, PlusSquare, Heart, User, Settings, LogOut, Instagram } from "lucide-react"
 
 interface DesktopSidebarProps {
   userId: string
@@ -39,11 +39,6 @@ export function DesktopSidebar({ userId, username, avatar }: DesktopSidebarProps
       name: "Create",
       href: "/create",
       icon: PlusSquare,
-    },
-    {
-      name: "Messages",
-      href: "/messages",
-      icon: MessageCircle,
     },
     {
       name: "Notifications",
