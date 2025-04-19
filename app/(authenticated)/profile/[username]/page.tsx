@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Grid3X3, Bookmark, Settings } from "lucide-react"
 import Link from "next/link"
+import { startConversationWithUser } from "@/app/actions/start-conversation"
 
 export default async function ProfilePage({ params }: { params: { username: string } }) {
   const supabase = createClient()
@@ -93,9 +94,11 @@ export default async function ProfilePage({ params }: { params: { username: stri
                     {isFollowing ? "Following" : "Follow"}
                   </Button>
                 </form>
-                <Button variant="outline" size="sm" className="font-semibold">
-                  Message
-                </Button>
+                <form action={startConversationWithUser.bind(null, profile.id)}>
+                  <Button variant="outline" size="sm" className="font-semibold" type="submit">
+                    Message
+                  </Button>
+                </form>
               </div>
             )}
           </div>

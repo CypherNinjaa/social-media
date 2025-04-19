@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { SearchInput } from "@/components/search/search-input"
 import { Button } from "@/components/ui/button"
-import { Search } from "lucide-react"
+import { Search, MessageSquare } from "lucide-react"
 
 export function Header() {
   const pathname = usePathname()
@@ -34,7 +34,14 @@ export function Header() {
           )}
         </div>
 
-        <nav className="flex items-center space-x-2">{/* Your existing navigation items */}</nav>
+        <nav className="flex items-center space-x-2">
+          <Link href="/messages">
+            <Button variant="ghost" size="icon">
+              <MessageSquare className="h-5 w-5" />
+            </Button>
+          </Link>
+          {/* Your existing navigation items */}
+        </nav>
       </div>
     </header>
   )
