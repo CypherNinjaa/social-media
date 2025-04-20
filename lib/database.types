@@ -308,6 +308,12 @@ export interface Database {
           headline: string
         }[]
       }
+      increment: {
+        Args: {
+          row_count: number
+        }
+        Returns: number
+      }
     }
   }
 }

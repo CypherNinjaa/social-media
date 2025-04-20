@@ -14,7 +14,7 @@ export function SiteFooter() {
           <Link href="/privacy" className="hover:underline">
             Privacy
           </Link>
-          <Link href="/about" className="hover:underline">
+          <Link href="/about-us" className="hover:underline">
             About
           </Link>
         </div>

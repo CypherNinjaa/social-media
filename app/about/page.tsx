@@ -21,7 +21,7 @@ export default function AboutPage() {
             <h2 className="text-3xl font-bold mb-6 text-center">Our Story</h2>
             <div className="prose dark:prose-invert max-w-none">
               <p>
-                SocialSphere was founded in 2023 with a simple but powerful vision: to create a social platform that
+                SocialSphere was founded in 2025 with a simple but powerful vision: to create a social platform that
                 prioritizes genuine connections and positive interactions. In a digital landscape often criticized for
                 its negative effects on mental health and social cohesion, we set out to build something different.
               </p>
@@ -205,63 +205,65 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Team Section */}
+      {/* Founder Section */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center">Our Leadership Team</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {/* Team Member 1 */}
-            <div className="text-center">
-              <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4">
-                <img src="/placeholder.svg?key=b0blf" alt="CEO" className="w-full h-full object-cover" />
-              </div>
-              <h3 className="text-xl font-semibold">Alex Johnson</h3>
-              <p className="text-gray-600 dark:text-gray-400">CEO & Co-Founder</p>
+          <h2 className="text-3xl font-bold mb-12 text-center">Founder</h2>
+          <div className="flex flex-col items-center max-w-3xl mx-auto">
+            <div className="w-40 h-40 rounded-full overflow-hidden mb-6">
+              <img src="/developer1.jpg" alt="Vikash Kumar" className="w-full h-full object-cover" />
             </div>
-
-            {/* Team Member 2 */}
-            <div className="text-center">
-              <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4">
-                <img src="/placeholder.svg?key=4wugl" alt="CTO" className="w-full h-full object-cover" />
-              </div>
-              <h3 className="text-xl font-semibold">Samantha Chen</h3>
-              <p className="text-gray-600 dark:text-gray-400">CTO & Co-Founder</p>
-            </div>
-
-            {/* Team Member 3 */}
-            <div className="text-center">
-              <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4">
-                <img src="/placeholder.svg?key=xqkif" alt="COO" className="w-full h-full object-cover" />
-              </div>
-              <h3 className="text-xl font-semibold">Marcus Williams</h3>
-              <p className="text-gray-600 dark:text-gray-400">COO</p>
-            </div>
-
-            {/* Team Member 4 */}
-            <div className="text-center">
-              <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4">
-                <img src="/placeholder.svg?key=k2nh6" alt="CMO" className="w-full h-full object-cover" />
-              </div>
-              <h3 className="text-xl font-semibold">Priya Patel</h3>
-              <p className="text-gray-600 dark:text-gray-400">CMO</p>
-            </div>
-
-            {/* Team Member 5 */}
-            <div className="text-center">
-              <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4">
-                <img src="/placeholder.svg?key=q605i" alt="CPO" className="w-full h-full object-cover" />
-              </div>
-              <h3 className="text-xl font-semibold">David Kim</h3>
-              <p className="text-gray-600 dark:text-gray-400">Chief Product Officer</p>
-            </div>
-
-            {/* Team Member 6 */}
-            <div className="text-center">
-              <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4">
-                <img src="/modern-design-leader.png" alt="Head of Design" className="w-full h-full object-cover" />
-              </div>
-              <h3 className="text-xl font-semibold">Elena Rodriguez</h3>
-              <p className="text-gray-600 dark:text-gray-400">Head of Design</p>
+            <h3 className="text-2xl font-semibold">Vikash Kumar</h3>
+            <p className="text-lg text-purple-600 dark:text-purple-400 mb-4">Founder & CEO</p>
+            <p className="text-center text-gray-600 dark:text-gray-400 max-w-2xl mb-6">
+              As the founder of SocialSphere, Vikash Kumar brings a passion for creating meaningful connections in the
+              digital world. With a vision to build a platform that prioritizes authentic interactions and user
+              well-being, Vikash leads the development of SocialSphere with a focus on innovation and community.
+            </p>
+            <div className="flex space-x-4">
+              <a
+                href="https://github.com/CypherNinjaa"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-5 w-5"
+                >
+                  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                </svg>
+                GitHub
+              </a>
+              <a
+                href="mailto:contact@socialsphere.example"
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-5 w-5"
+                >
+                  <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                </svg>
+                Contact
+              </a>
             </div>
           </div>
         </div>

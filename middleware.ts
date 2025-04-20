@@ -22,9 +22,21 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/notifications") ||
     request.nextUrl.pathname.startsWith("/search")
 
+  // Define auth routes that should redirect to feed if already authenticated
+  const isAuthRoute = request.nextUrl.pathname === "/auth" || request.nextUrl.pathname === "/auth/reset-password"
+
+  // Allow access to update-password route even without authentication
+  // This is needed for password reset flow
+  const isPasswordResetRoute = request.nextUrl.pathname === "/auth/update-password"
+
   // If the route is protected and the user is not authenticated, redirect to the home page
   if (isProtectedRoute && !isAuthenticated) {
     return NextResponse.redirect(new URL("/", request.url))
+  }
+
+  // If the user is authenticated and trying to access auth routes, redirect to feed
+  if (isAuthRoute && isAuthenticated) {
+    return NextResponse.redirect(new URL("/feed", request.url))
   }
 
   return response
@@ -32,5 +44,14 @@ export async function middleware(request: NextRequest) {
 
 // Define which routes this middleware should run on
 export const config = {
-  matcher: ["/feed/:path*", "/profile/:path*", "/settings/:path*", "/notifications/:path*", "/search/:path*"],
+  matcher: [
+    "/feed/:path*",
+    "/profile/:path*",
+    "/settings/:path*",
+    "/notifications/:path*",
+    "/search/:path*",
+    "/auth",
+    "/auth/reset-password",
+    "/auth/update-password",
+  ],
 }

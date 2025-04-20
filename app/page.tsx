@@ -2,27 +2,91 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { Loader2 } from "lucide-react"
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isProcessingCode, setIsProcessingCode] = useState(false)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const code = searchParams?.get("code")
+  const type = searchParams?.get("type")
 
   useEffect(() => {
-    // Check authentication status on the client side
-    const checkAuth = async () => {
-      const { createClient } = await import("@/lib/supabase/client")
-      const supabase = createClient()
-      const { data } = await supabase.auth.getSession()
+    // Process code parameter if present (for password reset or OAuth)
+    const processCode = async () => {
+      if (code) {
+        setIsProcessingCode(true)
+        const { createClient } = await import("@/lib/supabase/client")
+        const supabase = createClient()
 
-      if (data.session) {
-        window.location.href = "/feed"
-      } else {
-        setIsLoggedIn(false)
+        try {
+          // Exchange the code for a session
+          const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+
+          if (error) {
+            console.error("Error exchanging code for session:", error)
+            throw error
+          }
+
+          // If this is a recovery (password reset), redirect to update password page
+          if (
+            type === "recovery" ||
+            // Sometimes Supabase doesn't include the type parameter, so we check the session
+            (data?.user?.aud === "authenticated" && data?.user?.email_confirmed_at)
+          ) {
+            router.push("/auth/update-password")
+            return
+          }
+
+          // Otherwise, redirect to feed for normal sign-ins
+          if (data?.session) {
+            router.push("/feed")
+            return
+          }
+        } catch (error) {
+          console.error("Error processing code:", error)
+          // If there's an error, we'll just continue to show the homepage
+        } finally {
+          setIsProcessingCode(false)
+        }
+      }
+
+      // Check authentication status on the client side
+      const checkAuth = async () => {
+        const { createClient } = await import("@/lib/supabase/client")
+        const supabase = createClient()
+        const { data } = await supabase.auth.getSession()
+
+        if (data.session) {
+          router.push("/feed")
+        } else {
+          setIsLoggedIn(false)
+        }
+      }
+
+      if (!code) {
+        checkAuth()
       }
     }
 
-    checkAuth()
-  }, [])
+    processCode()
+  }, [code, type, router])
+
+  // Show loading state while processing code
+  if (isProcessingCode) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-primary" />
+          <h2 className="text-xl font-semibold mb-2">Processing your request</h2>
+          <p className="text-muted-foreground">Please wait while we set up your account...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen flex flex-col">

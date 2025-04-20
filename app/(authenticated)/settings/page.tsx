@@ -115,8 +115,8 @@ export default function SettingsPage() {
                 <p className="text-sm text-gray-500">Manage notification preferences</p>
               </div>
             </div>
-            <Button variant="ghost" size="sm">
-              Manage
+            <Button variant="ghost" size="sm" disabled className="cursor-not-allowed">
+              <span className="text-xs text-gray-400">Coming soon</span>
             </Button>
           </div>
 
@@ -127,11 +127,11 @@ export default function SettingsPage() {
               <Shield className="h-5 w-5 text-gray-500" />
               <div>
                 <p className="font-medium">Privacy</p>
-                <p className="text-sm text-gray-500">Control your privacy settings</p>
+                <p className="text-sm text-gray-500">Control who can see your content and profile information</p>
               </div>
             </div>
-            <Button variant="ghost" size="sm">
-              Manage
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/settings/privacy">Manage</Link>
             </Button>
           </div>
         </CardContent>
@@ -226,7 +226,7 @@ export default function SettingsPage() {
               </div>
             </div>
             <Button variant="ghost" size="sm" asChild>
-              <Link href="/about">View</Link>
+              <Link href="/about-us">View</Link>
             </Button>
           </div>
         </CardContent>
@@ -237,7 +237,7 @@ export default function SettingsPage() {
           <CardTitle className="text-xl text-red-500">Danger Zone</CardTitle>
           <CardDescription>Irreversible actions for your account</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <Button variant="destructive" onClick={handleSignOut} disabled={loading} className="w-full">
             {loading ? (
               <>
@@ -251,6 +251,31 @@ export default function SettingsPage() {
               </>
             )}
           </Button>
+
+          <Separator />
+
+          <div>
+            <p className="text-sm text-gray-500 mb-2">
+              Permanently delete your account and all of your content. This action cannot be undone.
+            </p>
+            <Button
+              variant="outline"
+              className="w-full border-red-500 text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950"
+              onClick={() => {
+                const confirmed = window.confirm(
+                  "Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.",
+                )
+                if (confirmed) {
+                  toast({
+                    title: "Account deletion requested",
+                    description: "Please contact support to complete the account deletion process.",
+                  })
+                }
+              }}
+            >
+              Delete Account
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>

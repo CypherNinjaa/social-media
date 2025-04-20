@@ -14,50 +14,63 @@ export function NotificationBell() {
   const router = useRouter()
   const supabase = createClient()
 
-  useEffect(() => {
-    const fetchUnreadCount = async () => {
-      try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser()
-        if (!user) return
+  const fetchUnreadCount = async () => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
 
-        const { count, error } = await supabase
-          .from("notifications")
-          .select("*", { count: "exact", head: true })
-          .eq("user_id", user.id)
-          .eq("is_read", false)
-
-        if (error) throw error
-        setUnreadCount(count || 0)
-      } catch (error) {
-        console.error("Error fetching unread notifications:", error)
-      } finally {
+      // Check if user is authenticated before making the query
+      if (!user) {
         setIsLoading(false)
+        return
       }
-    }
 
+      const { count, error } = await supabase
+        .from("notifications")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .eq("is_read", false)
+
+      if (error) throw error
+      setUnreadCount(count || 0)
+    } catch (error) {
+      console.error("Error fetching unread notifications:", error)
+      // Don't let the error break the UI
+      setUnreadCount(0)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
     fetchUnreadCount()
 
     // Set up real-time subscription for notifications
-    const channel = supabase
-      .channel("notification_changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "notifications",
-          filter: `user_id=eq.${supabase.auth.getUser().then((res) => res.data.user?.id)}`,
-        },
-        () => {
-          fetchUnreadCount()
-        },
-      )
-      .subscribe()
+    try {
+      const channel = supabase
+        .channel("notification_changes")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "notifications",
+            filter: `user_id=eq.${supabase.auth.getUser().then((res) => res.data.user?.id || "")}`,
+          },
+          () => {
+            fetchUnreadCount()
+          },
+        )
+        .subscribe()
 
-    return () => {
-      supabase.removeChannel(channel)
+      return () => {
+        supabase.removeChannel(channel)
+      }
+    } catch (error) {
+      console.error("Error setting up notification subscription:", error)
+      // Return empty cleanup function if subscription fails
+      return () => {}
     }
   }, [supabase, router])
 
