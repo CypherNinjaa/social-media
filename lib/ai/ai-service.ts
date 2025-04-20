@@ -1,14 +1,14 @@
-import { XAI } from "@xai-org/xai-node"
+import { OpenAI } from "openai"
 import { createClient } from "@/lib/supabase/server"
 
-// Initialize Grok client
-const getXaiClient = () => {
+// Initialize OpenAI client
+const getOpenAIClient = () => {
   try {
-    return new XAI({
-      apiKey: process.env.XAI_API_KEY,
+    return new OpenAI({
+      apiKey: process.env.XAI_API_KEY, // We'll reuse the existing API key
     })
   } catch (error) {
-    console.error("Failed to initialize XAI client:", error)
+    console.error("Failed to initialize OpenAI client:", error)
     return null
   }
 }
@@ -140,8 +140,8 @@ export const aiService = {
       return []
     }
 
-    const xai = getXaiClient()
-    if (!xai) {
+    const openai = getOpenAIClient()
+    if (!openai) {
       return []
     }
 
@@ -154,9 +154,9 @@ export const aiService = {
         Return a JSON array of objects with postId, score (0-1), and reason fields.
       `
 
-      const response = await xai.chat.completions.create({
+      const response = await openai.chat.completions.create({
         messages: [{ role: "user", content: prompt }],
-        model: "grok-1",
+        model: "gpt-4o",
         response_format: { type: "json_object" },
       })
 
@@ -191,8 +191,8 @@ export const aiService = {
       }
     }
 
-    const xai = getXaiClient()
-    if (!xai) {
+    const openai = getOpenAIClient()
+    if (!openai) {
       return {
         sentiment: "neutral",
         score: 0.5,
@@ -213,9 +213,9 @@ export const aiService = {
         - isAppropriate: boolean indicating if content is appropriate for general audience
       `
 
-      const response = await xai.chat.completions.create({
+      const response = await openai.chat.completions.create({
         messages: [{ role: "user", content: prompt }],
-        model: "grok-1",
+        model: "gpt-4o",
         response_format: { type: "json_object" },
       })
 
@@ -252,8 +252,8 @@ export const aiService = {
       }
     }
 
-    const xai = getXaiClient()
-    if (!xai) {
+    const openai = getOpenAIClient()
+    if (!openai) {
       return {
         text: "AI content generation is currently unavailable.",
         hashtags: [],
@@ -273,9 +273,9 @@ export const aiService = {
         - hashtags: array of hashtags (if requested)
       `
 
-      const response = await xai.chat.completions.create({
+      const response = await openai.chat.completions.create({
         messages: [{ role: "user", content: aiPrompt }],
-        model: "grok-1",
+        model: "gpt-4o",
         response_format: { type: "json_object" },
       })
 
@@ -320,8 +320,8 @@ export const aiService = {
       return "The AI assistant is currently unavailable. Please contact support through email."
     }
 
-    const xai = getXaiClient()
-    if (!xai) {
+    const openai = getOpenAIClient()
+    if (!openai) {
       return "The AI assistant is currently unavailable. Please contact support through email."
     }
 
@@ -336,9 +336,9 @@ export const aiService = {
         { role: "user", content: userQuery },
       ]
 
-      const response = await xai.chat.completions.create({
+      const response = await openai.chat.completions.create({
         messages,
-        model: "grok-1",
+        model: "gpt-4o",
       })
 
       const responseText =

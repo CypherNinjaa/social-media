@@ -44,7 +44,7 @@ export default function BlogPage() {
       author: "Elena Rodriguez",
       date: "June 23, 2023",
       category: "Design",
-      image: "/placeholder.svg?key=up2pd",
+      image: "/abstract-geometric-shapes.png",
     },
     {
       id: 6,
@@ -53,7 +53,7 @@ export default function BlogPage() {
       author: "David Kim",
       date: "July 10, 2023",
       category: "Community Stories",
-      image: "/placeholder.svg?key=yzjlz",
+      image: "/connected-world-blog.png",
     },
   ]
 
@@ -89,7 +89,7 @@ export default function BlogPage() {
                   </div>
                   <div>
                     <p className="text-white font-medium">Alex Johnson</p>
-                    <p className="text-white/70 text-sm">June 28, 2023</p>
+                    <p className="text-white/70 text-sm">March 28, 2023</p>
                   </div>
                 </div>
               </div>
@@ -102,6 +102,7 @@ export default function BlogPage() {
       <section className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-12 text-center">Latest Articles</h2>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {blogPosts.map((post) => (
               <div
@@ -109,24 +110,24 @@ export default function BlogPage() {
                 className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md transition-transform hover:shadow-lg hover:-translate-y-1"
               >
                 <div className="h-48 overflow-hidden">
-                  <img src={post.image || "/placeholder.svg"} alt={post.title} className="w-full h-full object-cover" />
+                  <img
+                    src={post.image || "/placeholder.svg?height=200&width=400&query=blog post"}
+                    alt={post.title}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="p-6">
                   <div className="flex items-center mb-2">
-                    <span className="text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-full">
+                    <span className="text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full">
                       {post.category}
                     </span>
                     <span className="text-xs text-gray-500 dark:text-gray-400 ml-auto">{post.date}</span>
                   </div>
-                  <h3 className="text-xl font-bold mb-2 line-clamp-2">{post.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">{post.excerpt}</p>
+                  <h3 className="text-xl font-bold mb-2">{post.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">{post.excerpt}</p>
                   <div className="flex items-center">
-                    <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
-                      <img
-                        src={`/abstract-geometric-shapes.png?height=32&width=32&query=${post.author.replace(/\s+/g, "")}`}
-                        alt={post.author}
-                        className="w-full h-full object-cover"
-                      />
+                    <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
+                      <img src="/diverse-professional-profiles.png" alt={post.author} className="w-full h-full object-cover" />
                     </div>
                     <span className="text-sm font-medium">{post.author}</span>
                   </div>
@@ -138,29 +139,26 @@ export default function BlogPage() {
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="bg-gradient-to-r from-blue-600 to-teal-500 rounded-xl p-8 md:p-12 text-white">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold mb-4">Subscribe to Our Newsletter</h2>
-              <p className="text-white/80 max-w-lg mx-auto">
-                Get the latest updates, news, and insights from the SocialSphere team delivered straight to your inbox.
-              </p>
-            </div>
-            <form className="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
-              />
-              <button
-                type="submit"
-                className="bg-white text-blue-600 font-medium px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                Subscribe
-              </button>
-            </form>
-          </div>
+      <section className="py-20 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-4">Stay Updated</h2>
+          <p className="max-w-2xl mx-auto mb-8">
+            Subscribe to our newsletter to receive the latest updates, articles, and insights from our team.
+          </p>
+
+          <form className="max-w-md mx-auto flex flex-col sm:flex-row gap-2">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            />
+            <button
+              type="submit"
+              className="bg-white text-blue-600 font-medium px-6 py-3 rounded-lg hover:bg-blue-50 transition-colors"
+            >
+              Subscribe
+            </button>
+          </form>
         </div>
       </section>
 
@@ -170,6 +168,20 @@ export default function BlogPage() {
           <p className="text-gray-600 dark:text-gray-400">
             &copy; {new Date().getFullYear()} SocialSphere. All rights reserved.
           </p>
+          <div className="mt-4 flex justify-center gap-4">
+            <a href="/" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+              Home
+            </a>
+            <a href="/about" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+              About
+            </a>
+            <a
+              href="/contact"
+              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              Contact
+            </a>
+          </div>
         </div>
       </footer>
     </div>

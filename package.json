@@ -59,8 +59,9 @@
     "vaul": "^0.9.6",
     "zod": "^3.24.1",
     "@supabase/supabase-js": "latest",
+    "ws": "latest",
     "@supabase/auth-helpers-nextjs": "latest",
-    "@xai-org/xai-node": "latest"
+    "openai": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

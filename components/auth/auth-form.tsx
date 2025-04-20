@@ -1,14 +1,13 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { z } from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { toast } from "@/components/ui/use-toast"
@@ -36,31 +35,45 @@ export function AuthForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [activeTab, setActiveTab] = useState(searchParams?.get("tab") === "register" ? "register" : "login")
 
-  const loginForm = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  })
+  // Login form state
+  const [loginEmail, setLoginEmail] = useState("")
+  const [loginPassword, setLoginPassword] = useState("")
+  const [loginErrors, setLoginErrors] = useState<{ email?: string; password?: string }>({})
 
-  const registerForm = useForm<z.infer<typeof registerSchema>>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-      username: "",
-      name: "",
-    },
-  })
+  // Register form state
+  const [registerEmail, setRegisterEmail] = useState("")
+  const [registerPassword, setRegisterPassword] = useState("")
+  const [registerUsername, setRegisterUsername] = useState("")
+  const [registerName, setRegisterName] = useState("")
+  const [registerErrors, setRegisterErrors] = useState<{
+    email?: string
+    password?: string
+    username?: string
+    name?: string
+  }>({})
 
-  async function onLoginSubmit(values: z.infer<typeof loginSchema>) {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
     setIsLoading(true)
+    setLoginErrors({})
+
+    // Validate form
+    const result = loginSchema.safeParse({ email: loginEmail, password: loginPassword })
+    if (!result.success) {
+      const formattedErrors: { email?: string; password?: string } = {}
+      result.error.errors.forEach((error) => {
+        if (error.path[0] === "email") formattedErrors.email = error.message
+        if (error.path[0] === "password") formattedErrors.password = error.message
+      })
+      setLoginErrors(formattedErrors)
+      setIsLoading(false)
+      return
+    }
 
     try {
       const { error } = await supabase.auth.signInWithPassword({
-        email: values.email,
-        password: values.password,
+        email: loginEmail,
+        password: loginPassword,
       })
 
       if (error) {
@@ -85,18 +98,42 @@ export function AuthForm() {
     }
   }
 
-  async function onRegisterSubmit(values: z.infer<typeof registerSchema>) {
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
     setIsLoading(true)
+    setRegisterErrors({})
+
+    // Validate form
+    const result = registerSchema.safeParse({
+      email: registerEmail,
+      password: registerPassword,
+      username: registerUsername,
+      name: registerName,
+    })
+
+    if (!result.success) {
+      const formattedErrors: { email?: string; password?: string; username?: string; name?: string } = {}
+      result.error.errors.forEach((error) => {
+        const field = error.path[0]
+        if (field === "email") formattedErrors.email = error.message
+        if (field === "password") formattedErrors.password = error.message
+        if (field === "username") formattedErrors.username = error.message
+        if (field === "name") formattedErrors.name = error.message
+      })
+      setRegisterErrors(formattedErrors)
+      setIsLoading(false)
+      return
+    }
 
     try {
       const { error } = await supabase.auth.signUp({
-        email: values.email,
-        password: values.password,
+        email: registerEmail,
+        password: registerPassword,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: {
-            username: values.username,
-            name: values.name,
+            username: registerUsername,
+            name: registerName,
           },
         },
       })
@@ -152,60 +189,58 @@ export function AuthForm() {
                 Enter your credentials to access your account
               </p>
             </div>
-            <Form {...loginForm}>
-              <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
-                <FormField
-                  control={loginForm.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder="email@example.com" {...field} className="bg-white dark:bg-gray-950" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+            <form onSubmit={handleLoginSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-medium">
+                  Email
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="email@example.com"
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  className="bg-white dark:bg-gray-950"
                 />
-                <FormField
-                  control={loginForm.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="••••••••"
-                          {...field}
-                          className="bg-white dark:bg-gray-950"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                {loginErrors.email && <p className="text-sm text-red-500">{loginErrors.email}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="password" className="text-sm font-medium">
+                  Password
+                </label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  className="bg-white dark:bg-gray-950"
                 />
-                <div className="text-right">
-                  <a href="#" className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
-                    Forgot password?
-                  </a>
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all duration-300"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Logging in...
-                    </>
-                  ) : (
-                    "Login"
-                  )}
-                </Button>
-              </form>
-            </Form>
+                {loginErrors.password && <p className="text-sm text-red-500">{loginErrors.password}</p>}
+              </div>
+
+              <div className="text-right">
+                <a href="#" className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+                  Forgot password?
+                </a>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all duration-300"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Logging in...
+                  </>
+                ) : (
+                  "Login"
+                )}
+              </Button>
+            </form>
 
             <div className="mt-6">
               <div className="relative">
@@ -263,81 +298,80 @@ export function AuthForm() {
               <h1 className="text-2xl font-bold">Create an account</h1>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Join our community and start sharing</p>
             </div>
-            <Form {...registerForm}>
-              <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
-                <FormField
-                  control={registerForm.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder="email@example.com" {...field} className="bg-white dark:bg-gray-950" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+            <form onSubmit={handleRegisterSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="register-email" className="text-sm font-medium">
+                  Email
+                </label>
+                <Input
+                  id="register-email"
+                  type="email"
+                  placeholder="email@example.com"
+                  value={registerEmail}
+                  onChange={(e) => setRegisterEmail(e.target.value)}
+                  className="bg-white dark:bg-gray-950"
                 />
-                <FormField
-                  control={registerForm.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Username</FormLabel>
-                      <FormControl>
-                        <Input placeholder="johndoe" {...field} className="bg-white dark:bg-gray-950" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                {registerErrors.email && <p className="text-sm text-red-500">{registerErrors.email}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="register-username" className="text-sm font-medium">
+                  Username
+                </label>
+                <Input
+                  id="register-username"
+                  placeholder="johndoe"
+                  value={registerUsername}
+                  onChange={(e) => setRegisterUsername(e.target.value)}
+                  className="bg-white dark:bg-gray-950"
                 />
-                <FormField
-                  control={registerForm.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Full Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="John Doe" {...field} className="bg-white dark:bg-gray-950" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                {registerErrors.username && <p className="text-sm text-red-500">{registerErrors.username}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="register-name" className="text-sm font-medium">
+                  Full Name
+                </label>
+                <Input
+                  id="register-name"
+                  placeholder="John Doe"
+                  value={registerName}
+                  onChange={(e) => setRegisterName(e.target.value)}
+                  className="bg-white dark:bg-gray-950"
                 />
-                <FormField
-                  control={registerForm.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="••••••••"
-                          {...field}
-                          className="bg-white dark:bg-gray-950"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                {registerErrors.name && <p className="text-sm text-red-500">{registerErrors.name}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="register-password" className="text-sm font-medium">
+                  Password
+                </label>
+                <Input
+                  id="register-password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={registerPassword}
+                  onChange={(e) => setRegisterPassword(e.target.value)}
+                  className="bg-white dark:bg-gray-950"
                 />
-                <Button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 transition-all duration-300"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating account...
-                    </>
-                  ) : (
-                    "Register"
-                  )}
-                </Button>
-              </form>
-            </Form>
+                {registerErrors.password && <p className="text-sm text-red-500">{registerErrors.password}</p>}
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 transition-all duration-300"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating account...
+                  </>
+                ) : (
+                  "Register"
+                )}
+              </Button>
+            </form>
           </div>
         </TabsContent>
       </Tabs>
