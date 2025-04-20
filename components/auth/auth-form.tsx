@@ -99,6 +99,7 @@ export function AuthForm() {
     }
   }
 
+  // Find the handleRegisterSubmit function and update it to ensure username is always provided
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -128,13 +129,18 @@ export function AuthForm() {
 
     try {
       const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
+
+      // Ensure username is never empty by using email prefix as fallback
+      const usernameToUse =
+        registerUsername.trim() || registerEmail.split("@")[0] + "_" + Math.floor(Math.random() * 10000)
+
       const { error } = await supabase.auth.signUp({
         email: registerEmail,
         password: registerPassword,
         options: {
           emailRedirectTo: `${siteUrl}/auth/callback`,
           data: {
-            username: registerUsername,
+            username: usernameToUse, // Use the validated username or fallback
             name: registerName,
           },
         },
