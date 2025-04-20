@@ -127,7 +127,11 @@ export default function BlogPage() {
                   <p className="text-gray-600 dark:text-gray-300 mb-4">{post.excerpt}</p>
                   <div className="flex items-center">
                     <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
-                      <img src="/diverse-professional-profiles.png" alt={post.author} className="w-full h-full object-cover" />
+                      <img
+                        src="/diverse-professional-profiles.png"
+                        alt={post.author}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <span className="text-sm font-medium">{post.author}</span>
                   </div>

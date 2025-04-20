@@ -82,16 +82,14 @@ export default async function ProfilePage({ params }: { params: { username: stri
 
               {isOwnProfile ? (
                 <div className="flex gap-2">
-                  <Link href="/settings">
-                    <Button variant="outline" size="sm" className="font-semibold">
-                      Edit profile
-                    </Button>
-                  </Link>
-                  <Link href="/settings">
-                    <Button variant="ghost" size="sm" className="font-semibold">
+                  <Button variant="outline" size="sm" className="font-semibold" asChild>
+                    <Link href="/settings">Edit profile</Link>
+                  </Button>
+                  <Button variant="ghost" size="sm" className="font-semibold" asChild>
+                    <Link href="/settings">
                       <Settings className="h-4 w-4" />
-                    </Button>
-                  </Link>
+                    </Link>
+                  </Button>
                 </div>
               ) : (
                 <div className="flex gap-2">
