@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { toast } from "@/components/ui/use-toast"
 import { createClient } from "@/lib/supabase/client"
+import { Loader2 } from "lucide-react"
 
 interface PrivacySettingsFormProps {
   initialSettings: {
@@ -19,9 +20,10 @@ interface PrivacySettingsFormProps {
     allow_mentions: boolean
   }
   userId: string
+  updateAction?: (formData: FormData) => Promise<any>
 }
 
-export function PrivacySettingsForm({ initialSettings, userId }: PrivacySettingsFormProps) {
+export function PrivacySettingsForm({ initialSettings, userId, updateAction }: PrivacySettingsFormProps) {
   const [profileVisibility, setProfileVisibility] = useState(initialSettings.profile_visibility || "public")
   const [showActivityStatus, setShowActivityStatus] = useState(initialSettings.show_activity_status !== false)
   const [allowTagging, setAllowTagging] = useState(initialSettings.allow_tagging !== false)
@@ -35,29 +37,81 @@ export function PrivacySettingsForm({ initialSettings, userId }: PrivacySettings
     setIsSaving(true)
 
     try {
-      const settings = {
-        user_id: userId,
-        profile_visibility: profileVisibility,
-        show_activity_status: showActivityStatus,
-        allow_tagging: allowTagging,
-        show_online_status: showOnlineStatus,
-        allow_mentions: allowMentions,
-        updated_at: new Date().toISOString(),
+      if (updateAction) {
+        // Use the server action if provided
+        const formData = new FormData()
+        formData.append("userId", userId)
+        formData.append("profileVisibility", profileVisibility)
+        formData.append("showActivityStatus", showActivityStatus.toString())
+        formData.append("allowTagging", allowTagging.toString())
+        formData.append("showOnlineStatus", showOnlineStatus.toString())
+        formData.append("allowMentions", allowMentions.toString())
+
+        const result = await updateAction(formData)
+
+        if (result && !result.success) {
+          throw new Error(result.error || "Failed to save settings")
+        }
+
+        toast({
+          title: "Privacy settings updated",
+          description: "Your privacy preferences have been saved successfully.",
+        })
+      } else {
+        // Fall back to client-side update
+        // Check if a record already exists
+        const { data: existingSettings } = await supabase
+          .from("user_settings")
+          .select("id")
+          .eq("user_id", userId)
+          .maybeSingle()
+
+        let error
+
+        if (existingSettings) {
+          // Update existing record
+          const { error: updateError } = await supabase
+            .from("user_settings")
+            .update({
+              profile_visibility: profileVisibility,
+              show_activity_status: showActivityStatus,
+              allow_tagging: allowTagging,
+              show_online_status: showOnlineStatus,
+              allow_mentions: allowMentions,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("user_id", userId)
+
+          error = updateError
+        } else {
+          // Insert new record
+          const { error: insertError } = await supabase.from("user_settings").insert({
+            user_id: userId,
+            profile_visibility: profileVisibility,
+            show_activity_status: showActivityStatus,
+            allow_tagging: allowTagging,
+            show_online_status: showOnlineStatus,
+            allow_mentions: allowMentions,
+          })
+
+          error = insertError
+        }
+
+        if (error) {
+          console.error("Supabase error:", error)
+          throw new Error(error.message)
+        }
+
+        toast({
+          title: "Privacy settings updated",
+          description: "Your privacy preferences have been saved successfully.",
+        })
       }
-
-      const { error } = await supabase.from("user_settings").upsert(settings, { onConflict: "user_id" })
-
-      if (error) throw error
-
-      toast({
-        title: "Privacy settings updated",
-        description: "Your privacy preferences have been saved successfully.",
-      })
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving privacy settings:", error)
       toast({
         title: "Error",
-        description: "Failed to save privacy settings. Please try again.",
+        description: error.message || "Failed to save privacy settings. Please try again.",
         variant: "destructive",
       })
     } finally {
@@ -144,7 +198,14 @@ export function PrivacySettingsForm({ initialSettings, userId }: PrivacySettings
 
       <div className="flex justify-end">
         <Button onClick={handleSave} disabled={isSaving}>
-          {isSaving ? "Saving..." : "Save Changes"}
+          {isSaving ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            "Save Changes"
+          )}
         </Button>
       </div>
     </div>
