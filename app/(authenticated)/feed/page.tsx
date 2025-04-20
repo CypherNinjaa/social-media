@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { PostCard } from "@/components/post/post-card"
 import { SuggestedUsers } from "@/components/user/suggested-users"
+import Link from "next/link"
 
 export default async function FeedPage() {
   const supabase = createClient()
@@ -118,7 +119,9 @@ export default async function FeedPage() {
                   <p className="text-sm text-gray-500 dark:text-gray-400">{profile.full_name || ""}</p>
                 </div>
               </div>
-              <button className="text-xs font-semibold text-blue-500">Switch</button>
+              <Link href="/auth" className="text-xs font-semibold text-blue-500 hover:underline">
+                Switch
+              </Link>
             </div>
 
             {/* Suggested users */}
