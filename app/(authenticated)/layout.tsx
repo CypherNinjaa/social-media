@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { Suspense } from "react"
 import { MobileNavigation } from "@/components/layout/mobile-navigation"
+import { MobileHeader } from "@/components/layout/mobile-header"
 import { DesktopSidebar } from "@/components/layout/desktop-sidebar"
 
 export default async function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
@@ -27,9 +28,12 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
       {/* Desktop Sidebar */}
       <DesktopSidebar userId={session.user.id} username={profile?.username} avatar={profile?.avatar_url} />
 
+      {/* Mobile Header */}
+      <MobileHeader />
+
       {/* Main Content */}
       <div className="flex-1 md:ml-[72px] lg:ml-[244px]">
-        <main className="min-h-screen pb-16 md:pb-0">
+        <main className="min-h-screen pb-16 md:pb-0 mt-14 md:mt-0">
           <Suspense>{children}</Suspense>
         </main>
       </div>

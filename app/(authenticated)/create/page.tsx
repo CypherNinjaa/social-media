@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
@@ -11,10 +11,11 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/use-toast"
-import { Loader2, ImageIcon, X, AlertCircle } from "lucide-react"
+import { Loader2, ImageIcon, X, AlertCircle, Sparkles } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useEffect } from "react"
+import { AIContentGenerator } from "@/components/post/ai-content-generator"
+// import { checkAIFeatureAvailability } from "@/lib/ai/ai-service"
 
 export default function CreatePostPage() {
   const [content, setContent] = useState("")
@@ -24,6 +25,9 @@ export default function CreatePostPage() {
   const [error, setError] = useState<string | null>(null)
   const [profile, setProfile] = useState<any>(null)
   const [loadingProfile, setLoadingProfile] = useState(true)
+  const [showAIGenerator, setShowAIGenerator] = useState(false)
+  const [aiEnabled, setAiEnabled] = useState(false)
+  const [isCheckingAI, setIsCheckingAI] = useState(true)
   const router = useRouter()
   const supabase = createClient()
 
@@ -52,6 +56,34 @@ export default function CreatePostPage() {
     getProfile()
   }, [supabase, router])
 
+  useEffect(() => {
+    async function checkAIStatus() {
+      try {
+        if (!profile?.id) return
+
+        // Check AI feature status directly from the database
+        const { data, error } = await supabase
+          .from("ai_feature_status")
+          .select("is_enabled")
+          .eq("user_id", profile.id)
+          .eq("feature_name", "content_generation")
+          .single()
+
+        // If no record exists or there's an error, default to enabled
+        setAiEnabled(data?.is_enabled !== false)
+      } catch (error) {
+        console.error("Error checking AI status:", error)
+        setAiEnabled(false)
+      } finally {
+        setIsCheckingAI(false)
+      }
+    }
+
+    if (profile?.id) {
+      checkAIStatus()
+    }
+  }, [profile?.id, supabase])
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
@@ -73,6 +105,22 @@ export default function CreatePostPage() {
   const removeImage = () => {
     setImage(null)
     setImagePreview(null)
+  }
+
+  const handleAIContentGenerated = (generatedContent: string, hashtags?: string[]) => {
+    let newContent = generatedContent
+
+    if (hashtags && hashtags.length > 0) {
+      newContent += "\n\n" + hashtags.map((tag) => (tag.startsWith("#") ? tag : `#${tag}`)).join(" ")
+    }
+
+    setContent(newContent)
+    setShowAIGenerator(false)
+
+    toast({
+      title: "Content Generated",
+      description: "AI-generated content has been added to your post",
+    })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -158,10 +206,34 @@ export default function CreatePostPage() {
 
   return (
     <div className="container max-w-3xl py-12 px-4 sm:px-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Create Post</h1>
+        {!isCheckingAI && aiEnabled && (
+          <Button
+            variant="outline"
+            onClick={() => setShowAIGenerator(!showAIGenerator)}
+            className={
+              showAIGenerator ? "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800" : ""
+            }
+          >
+            <Sparkles className="h-4 w-4 mr-2 text-purple-500" />
+            {showAIGenerator ? "Hide AI Generator" : "Use AI Generator"}
+          </Button>
+        )}
+      </div>
+
       <div className="relative">
         {/* Decorative elements */}
         <div className="absolute -top-10 -left-10 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl" />
         <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
+
+        {showAIGenerator && !isCheckingAI && (
+          <AIContentGenerator
+            userId={profile?.id || ""}
+            onContentGenerated={handleAIContentGenerated}
+            isEnabled={aiEnabled}
+          />
+        )}
 
         <Card className="border-none shadow-2xl bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5 pointer-events-none" />

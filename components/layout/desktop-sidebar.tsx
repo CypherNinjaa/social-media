@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Home, Search, PlusSquare, Heart, User, Settings, LogOut, Instagram } from "lucide-react"
+import { Home, Search, PlusSquare, Heart, User, Settings, LogOut } from "lucide-react"
 
 interface DesktopSidebarProps {
   userId: string
@@ -61,10 +61,10 @@ export function DesktopSidebar({ userId, username, avatar }: DesktopSidebarProps
     <aside className="fixed left-0 top-0 bottom-0 hidden md:flex flex-col border-r bg-white dark:bg-gray-950 w-[72px] lg:w-[244px] z-50">
       <div className="p-4 lg:p-6 flex items-center justify-center lg:justify-start">
         <Link href="/feed" className="flex items-center">
-          <span className="hidden lg:inline-block text-xl font-semibold">SocialSphere</span>
-          <span className="lg:hidden">
-            <Instagram className="h-6 w-6" />
-          </span>
+          <div className="h-8 w-8 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center">
+            <span className="text-white font-bold">S</span>
+          </div>
+          <span className="hidden lg:inline-block text-xl font-semibold ml-2">SocialSphere</span>
         </Link>
       </div>
 

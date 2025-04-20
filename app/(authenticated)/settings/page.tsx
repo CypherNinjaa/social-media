@@ -4,12 +4,13 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useTheme } from "next-themes"
-import { Loader2, LogOut, Moon, Sun, User, Bell, Shield, HelpCircle, Info } from "lucide-react"
+import { Loader2, LogOut, Moon, Sun, User, Bell, Shield, HelpCircle, Info, Sparkles, Sliders } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/components/ui/use-toast"
 import { Separator } from "@/components/ui/separator"
+import Link from "next/link"
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -17,6 +18,8 @@ export default function SettingsPage() {
   const { theme, setTheme } = useTheme()
   const [loading, setLoading] = useState(false)
   const [user, setUser] = useState<any>(null)
+  const [aiEnabled, setAiEnabled] = useState(false)
+  const [isCheckingAI, setIsCheckingAI] = useState(true)
 
   useEffect(() => {
     const getUser = async () => {
@@ -25,8 +28,34 @@ export default function SettingsPage() {
       } = await supabase.auth.getUser()
       setUser(user)
     }
+
     getUser()
   }, [supabase])
+
+  // Check if AI features are enabled
+  useEffect(() => {
+    const checkAIStatus = async () => {
+      try {
+        const { data } = await supabase
+          .from("ai_feature_status")
+          .select("is_enabled")
+          .eq("feature_name", "recommendations")
+          .eq("user_id", user?.id)
+          .single()
+
+        setAiEnabled(data?.is_enabled ?? true)
+      } catch (error) {
+        console.error("Error checking AI status:", error)
+        setAiEnabled(true) // Default to enabled
+      } finally {
+        setIsCheckingAI(false)
+      }
+    }
+
+    if (user?.id) {
+      checkAIStatus()
+    }
+  }, [user, supabase])
 
   const handleSignOut = async () => {
     setLoading(true)
@@ -110,6 +139,42 @@ export default function SettingsPage() {
 
       <Card>
         <CardHeader>
+          <CardTitle className="text-xl">AI Features</CardTitle>
+          <CardDescription>Manage AI-powered features</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Sparkles className="h-5 w-5 text-gray-500" />
+              <div>
+                <p className="font-medium">AI Features</p>
+                <p className="text-sm text-gray-500">Manage AI-powered features and preferences</p>
+              </div>
+            </div>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/settings/ai-features">Manage</Link>
+            </Button>
+          </div>
+
+          <Separator />
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Sliders className="h-5 w-5 text-gray-500" />
+              <div>
+                <p className="font-medium">Content Preferences</p>
+                <p className="text-sm text-gray-500">Customize your feed and recommendations</p>
+              </div>
+            </div>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/settings/preferences">Manage</Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle className="text-xl">Appearance</CardTitle>
           <CardDescription>Customize how SocialSphere looks</CardDescription>
         </CardHeader>
@@ -145,8 +210,8 @@ export default function SettingsPage() {
                 <p className="text-sm text-gray-500">Get help with using SocialSphere</p>
               </div>
             </div>
-            <Button variant="ghost" size="sm">
-              Visit
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/help">Visit</Link>
             </Button>
           </div>
 
@@ -160,8 +225,8 @@ export default function SettingsPage() {
                 <p className="text-sm text-gray-500">Learn more about SocialSphere</p>
               </div>
             </div>
-            <Button variant="ghost" size="sm">
-              View
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/about">View</Link>
             </Button>
           </div>
         </CardContent>

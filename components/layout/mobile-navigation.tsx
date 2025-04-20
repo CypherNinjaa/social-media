@@ -47,21 +47,30 @@ export function MobileNavigation({ userId, avatar }: MobileNavigationProps) {
   ]
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-950 border-t md:hidden">
-      <div className="flex justify-around items-center h-14">
+    <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 md:hidden">
+      <div className="flex items-center bg-white dark:bg-gray-900 rounded-full px-2 py-1 shadow-lg border border-gray-100 dark:border-gray-800 backdrop-blur-sm bg-opacity-80 dark:bg-opacity-80">
         {navItems.map((item) => {
           const Icon = item.icon
-          const isActive = pathname === item.href
+          const isActive = pathname === item.href || (item.href.includes("/profile") && pathname.includes("/profile"))
 
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center justify-center w-full h-full ${
-                isActive ? "text-black dark:text-white" : "text-gray-500 dark:text-gray-400"
+              className={`relative flex items-center justify-center mx-2 p-3 rounded-full transition-all duration-300 ${
+                isActive
+                  ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md"
+                  : "hover:bg-gray-100 dark:hover:bg-gray-800"
               }`}
             >
-              <Icon className={`h-6 w-6 ${item.href === `/profile/${userId}` ? "" : ""}`} />
+              {isActive && (
+                <span className="absolute inset-0 rounded-full animate-pulse bg-gradient-to-r from-purple-500/20 to-blue-500/20 blur-sm" />
+              )}
+              {item.href === `/profile/${userId}` ? (
+                <Icon />
+              ) : (
+                <Icon className={`h-5 w-5 ${isActive ? "stroke-[2.5px]" : ""}`} />
+              )}
               <span className="sr-only">{item.label}</span>
             </Link>
           )

@@ -1,0 +1,177 @@
+export default function BlogPage() {
+  // Sample blog posts data
+  const blogPosts = [
+    {
+      id: 1,
+      title: "Introducing SocialSphere: A New Way to Connect",
+      excerpt: "Learn about our mission to create a more authentic and positive social media experience.",
+      author: "Alex Johnson",
+      date: "April 15, 2023",
+      category: "Company News",
+      image: "/rising-network.png",
+    },
+    {
+      id: 2,
+      title: "5 Tips for Building a Genuine Online Community",
+      excerpt: "Discover strategies for creating meaningful connections in digital spaces.",
+      author: "Samantha Chen",
+      date: "May 2, 2023",
+      category: "Community Building",
+      image: "/interconnected-digital-community.png",
+    },
+    {
+      id: 3,
+      title: "The Future of Social Media: Trends to Watch",
+      excerpt: "Explore emerging technologies and cultural shifts shaping the next generation of social platforms.",
+      author: "Marcus Williams",
+      date: "May 18, 2023",
+      category: "Industry Insights",
+      image: "/interconnected-future.png",
+    },
+    {
+      id: 4,
+      title: "Digital Wellbeing: Finding Balance in a Connected World",
+      excerpt: "Practical advice for maintaining healthy relationships with technology and social media.",
+      author: "Priya Patel",
+      date: "June 7, 2023",
+      category: "Digital Wellbeing",
+      image: "/balanced-digital-life.png",
+    },
+    {
+      id: 5,
+      title: "Behind the Design: Creating an Inclusive User Experience",
+      excerpt: "Our design team shares insights on building accessible and welcoming digital spaces.",
+      author: "Elena Rodriguez",
+      date: "June 23, 2023",
+      category: "Design",
+      image: "/placeholder.svg?key=up2pd",
+    },
+    {
+      id: 6,
+      title: "Community Spotlight: Amazing Stories from SocialSphere Users",
+      excerpt: "Highlighting the creative ways our users are building connections on our platform.",
+      author: "David Kim",
+      date: "July 10, 2023",
+      category: "Community Stories",
+      image: "/placeholder.svg?key=yzjlz",
+    },
+  ]
+
+  return (
+    <div className="bg-white dark:bg-gray-950">
+      {/* Header */}
+      <header className="bg-gradient-to-r from-blue-600 to-teal-500 py-20">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">SocialSphere Blog</h1>
+          <p className="text-xl text-white/90 max-w-2xl mx-auto">
+            Insights, updates, and stories from our team and community.
+          </p>
+        </div>
+      </header>
+
+      {/* Featured Post */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="relative rounded-xl overflow-hidden">
+              <img src="/connected-world-blog.png" alt="Featured post" className="w-full h-80 object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-8">
+                <span className="text-teal-400 font-medium mb-2">Featured Post</span>
+                <h2 className="text-3xl font-bold text-white mb-2">
+                  The Evolution of Social Media: Where We're Headed
+                </h2>
+                <p className="text-white/80 mb-4">
+                  An in-depth look at how social platforms are changing and what it means for users and society.
+                </p>
+                <div className="flex items-center">
+                  <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
+                    <img src="/confident-professional.png" alt="Author" className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">Alex Johnson</p>
+                    <p className="text-white/70 text-sm">June 28, 2023</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Blog Posts Grid */}
+      <section className="py-16 bg-gray-50 dark:bg-gray-900">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-12 text-center">Latest Articles</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {blogPosts.map((post) => (
+              <div
+                key={post.id}
+                className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md transition-transform hover:shadow-lg hover:-translate-y-1"
+              >
+                <div className="h-48 overflow-hidden">
+                  <img src={post.image || "/placeholder.svg"} alt={post.title} className="w-full h-full object-cover" />
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center mb-2">
+                    <span className="text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-full">
+                      {post.category}
+                    </span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 ml-auto">{post.date}</span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 line-clamp-2">{post.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">{post.excerpt}</p>
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
+                      <img
+                        src={`/abstract-geometric-shapes.png?height=32&width=32&query=${post.author.replace(/\s+/g, "")}`}
+                        alt={post.author}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <span className="text-sm font-medium">{post.author}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="bg-gradient-to-r from-blue-600 to-teal-500 rounded-xl p-8 md:p-12 text-white">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold mb-4">Subscribe to Our Newsletter</h2>
+              <p className="text-white/80 max-w-lg mx-auto">
+                Get the latest updates, news, and insights from the SocialSphere team delivered straight to your inbox.
+              </p>
+            </div>
+            <form className="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
+              />
+              <button
+                type="submit"
+                className="bg-white text-blue-600 font-medium px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                Subscribe
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 py-8">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-gray-600 dark:text-gray-400">
+            &copy; {new Date().getFullYear()} SocialSphere. All rights reserved.
+          </p>
+        </div>
+      </footer>
+    </div>
+  )
+}

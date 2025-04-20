@@ -1,17 +1,28 @@
-import { createClient } from "@/lib/supabase/server"
-import { redirect } from "next/navigation"
+"use client"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react"
 
-export default async function Home() {
-  const supabase = createClient()
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
+export default function Home() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  if (session) {
-    redirect("/feed")
-  }
+  useEffect(() => {
+    // Check authentication status on the client side
+    const checkAuth = async () => {
+      const { createClient } = await import("@/lib/supabase/client")
+      const supabase = createClient()
+      const { data } = await supabase.auth.getSession()
+
+      if (data.session) {
+        window.location.href = "/feed"
+      } else {
+        setIsLoggedIn(false)
+      }
+    }
+
+    checkAuth()
+  }, [])
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -46,7 +57,12 @@ export default async function Home() {
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-teal-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
           </nav>
-          <button className="md:hidden z-10 p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden z-10 p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            aria-expanded={isMenuOpen}
+            aria-label="Toggle mobile menu"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -58,12 +74,66 @@ export default async function Home() {
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <line x1="4" x2="20" y1="12" y2="12"></line>
-              <line x1="4" x2="20" y1="6" y2="6"></line>
-              <line x1="4" x2="20" y1="18" y2="18"></line>
+              {isMenuOpen ? (
+                <>
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </>
+              ) : (
+                <>
+                  <line x1="4" x2="20" y1="12" y2="12"></line>
+                  <line x1="4" x2="20" y1="6" y2="6"></line>
+                  <line x1="4" x2="20" y1="18" y2="18"></line>
+                </>
+              )}
             </svg>
           </button>
         </div>
+        {/* Mobile menu */}
+        {isMenuOpen && (
+          <div className="md:hidden fixed inset-0 z-40 bg-white dark:bg-gray-950 pt-16 px-4">
+            <nav className="flex flex-col gap-6 items-center py-8">
+              <Link
+                href="#features"
+                className="text-lg font-medium relative group"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400 group-hover:from-pink-500 group-hover:to-purple-500 transition-all duration-300">
+                  Features
+                </span>
+              </Link>
+              <Link href="#about" className="text-lg font-medium relative group" onClick={() => setIsMenuOpen(false)}>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400 group-hover:from-purple-500 group-hover:to-blue-500 transition-all duration-300">
+                  About
+                </span>
+              </Link>
+              <Link href="/auth" className="text-lg font-medium relative group" onClick={() => setIsMenuOpen(false)}>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400 group-hover:from-blue-500 group-hover:to-teal-500 transition-all duration-300">
+                  Sign In
+                </span>
+              </Link>
+              <div className="mt-6 flex flex-col gap-4 w-full">
+                <Link href="/auth?tab=register" className="w-full" onClick={() => setIsMenuOpen(false)}>
+                  <Button
+                    size="lg"
+                    className="w-full bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 hover:opacity-90 transition-all"
+                  >
+                    Get Started
+                  </Button>
+                </Link>
+                <Link href="/auth" className="w-full" onClick={() => setIsMenuOpen(false)}>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full border-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                  >
+                    Log In
+                  </Button>
+                </Link>
+              </div>
+            </nav>
+          </div>
+        )}
       </header>
       <main className="flex-1">
         <section className="py-12 md:py-24 lg:py-32 xl:py-48">
@@ -267,18 +337,29 @@ export default async function Home() {
             {/* Brand section */}
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 flex items-center justify-center shadow-md transform transition-transform hover:scale-110">
-                  <span className="text-white font-bold text-lg">S</span>
+                <div className="bg-gradient-to-r from-blue-500 to-teal-500 rounded-full p-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-white"
+                  >
+                    <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"></path>
+                  </svg>
                 </div>
-                <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500">
-                  SocialSphere
-                </span>
+                <h3 className="text-xl font-bold">SocialSphere</h3>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-300 max-w-xs">
-                Connect with friends, share moments, and discover content that matters to you.
+              <p className="text-gray-600 dark:text-gray-400">
+                Connect, share, and discover with our innovative social platform.
               </p>
-              <div className="flex space-x-4 mt-2">
-                <Link href="#" className="text-gray-500 hover:text-pink-500 transition-colors">
+              <div className="flex gap-4 mt-2">
+                <a href="#" className="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -289,13 +370,11 @@ export default async function Home() {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="h-5 w-5"
                   >
                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
                   </svg>
-                  <span className="sr-only">Facebook</span>
-                </Link>
-                <Link href="#" className="text-gray-500 hover:text-purple-500 transition-colors">
+                </a>
+                <a href="#" className="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -306,13 +385,11 @@ export default async function Home() {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="h-5 w-5"
                   >
                     <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
                   </svg>
-                  <span className="sr-only">Twitter</span>
-                </Link>
-                <Link href="#" className="text-gray-500 hover:text-orange-500 transition-colors">
+                </a>
+                <a href="#" className="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -323,103 +400,123 @@ export default async function Home() {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="h-5 w-5"
                   >
-                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                   </svg>
-                  <span className="sr-only">Instagram</span>
-                </Link>
+                </a>
+                <a href="#" className="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                    <rect x="2" y="9" width="4" height="12"></rect>
+                    <circle cx="4" cy="4" r="2"></circle>
+                  </svg>
+                </a>
               </div>
             </div>
 
             {/* Product links */}
-            <div className="flex flex-col gap-4">
-              <h3 className="text-base font-semibold relative">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-500">
-                  Product
-                </span>
-                <span className="absolute -bottom-2 left-0 w-8 h-1 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full"></span>
-              </h3>
-              <nav className="flex flex-col gap-3 mt-2">
-                <Link
-                  href="#"
-                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-pink-500 dark:hover:text-pink-400 transition-colors"
-                >
-                  Features
-                </Link>
-                <Link
-                  href="#"
-                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-pink-500 dark:hover:text-pink-400 transition-colors"
-                >
-                  Pricing
-                </Link>
-                <Link
-                  href="#"
-                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-pink-500 dark:hover:text-pink-400 transition-colors"
-                >
-                  FAQ
-                </Link>
-              </nav>
+            <div>
+              <h4 className="font-semibold text-lg mb-4">Product</h4>
+              <ul className="space-y-3">
+                <li>
+                  <Link
+                    href="/features"
+                    className="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400"
+                  >
+                    Features
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/pricing"
+                    className="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400"
+                  >
+                    Pricing
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/faq"
+                    className="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400"
+                  >
+                    FAQ
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/blog"
+                    className="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400"
+                  >
+                    Blog
+                  </Link>
+                </li>
+              </ul>
             </div>
 
             {/* Company links */}
-            <div className="flex flex-col gap-4">
-              <h3 className="text-base font-semibold relative">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-blue-500">
-                  Company
-                </span>
-                <span className="absolute -bottom-2 left-0 w-8 h-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"></span>
-              </h3>
-              <nav className="flex flex-col gap-3 mt-2">
-                <Link
-                  href="#"
-                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
-                >
-                  About
-                </Link>
-                <Link
-                  href="#"
-                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
-                >
-                  Blog
-                </Link>
-                <Link
-                  href="#"
-                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
-                >
-                  Careers
-                </Link>
-              </nav>
+            <div>
+              <h4 className="font-semibold text-lg mb-4">Company</h4>
+              <ul className="space-y-3">
+                <li>
+                  <Link
+                    href="/about"
+                    className="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400"
+                  >
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/careers"
+                    className="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400"
+                  >
+                    Careers
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/contact"
+                    className="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400"
+                  >
+                    Contact Us
+                  </Link>
+                </li>
+              </ul>
             </div>
 
             {/* Legal links */}
-            <div className="flex flex-col gap-4">
-              <h3 className="text-base font-semibold relative">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-500">Legal</span>
-                <span className="absolute -bottom-2 left-0 w-8 h-1 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full"></span>
-              </h3>
-              <nav className="flex flex-col gap-3 mt-2">
-                <Link
-                  href="#"
-                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
-                >
-                  Privacy
-                </Link>
-                <Link
-                  href="#"
-                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
-                >
-                  Terms
-                </Link>
-                <Link
-                  href="#"
-                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
-                >
-                  Contact
-                </Link>
-              </nav>
+            <div>
+              <h4 className="font-semibold text-lg mb-4">Legal</h4>
+              <ul className="space-y-3">
+                <li>
+                  <Link
+                    href="/privacy"
+                    className="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400"
+                  >
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/terms"
+                    className="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400"
+                  >
+                    Terms of Service
+                  </Link>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
