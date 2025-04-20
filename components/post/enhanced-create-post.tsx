@@ -6,7 +6,6 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ImageIcon, Loader2, X } from "lucide-react"
@@ -15,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { toast } from "@/components/ui/use-toast"
 import { AIContentGenerator } from "@/components/post/ai-content-generator"
-import { checkAIFeatureAvailability } from "@/lib/ai/ai-service"
+import { MentionInput } from "@/components/post/mention-input"
 
 interface Profile {
   id: string
@@ -32,6 +31,7 @@ export function EnhancedCreatePost({ profile }: { profile: Profile }) {
   const [error, setError] = useState<string | null>(null)
   const [aiEnabled, setAiEnabled] = useState(false)
   const [isCheckingAI, setIsCheckingAI] = useState(true)
+  const [mentionsEnabled, setMentionsEnabled] = useState(true)
   const router = useRouter()
   const supabase = createClient()
 
@@ -39,8 +39,15 @@ export function EnhancedCreatePost({ profile }: { profile: Profile }) {
   useEffect(() => {
     async function checkAIStatus() {
       try {
-        const status = await checkAIFeatureAvailability(profile.id, "content_generation")
-        setAiEnabled(status.isEnabled)
+        const { data, error } = await supabase
+          .from("ai_feature_status")
+          .select("is_enabled")
+          .eq("user_id", profile.id)
+          .eq("feature_name", "content_generation")
+          .single()
+
+        // If no record exists or there's an error, default to enabled
+        setAiEnabled(data?.is_enabled !== false)
       } catch (error) {
         console.error("Error checking AI status:", error)
         setAiEnabled(false)
@@ -50,7 +57,27 @@ export function EnhancedCreatePost({ profile }: { profile: Profile }) {
     }
 
     checkAIStatus()
-  }, [profile.id])
+  }, [profile.id, supabase])
+
+  // Check if mentions are allowed for this user
+  useEffect(() => {
+    async function checkMentionsStatus() {
+      try {
+        const { data: settings } = await supabase
+          .from("user_settings")
+          .select("allow_mentions")
+          .eq("user_id", profile.id)
+          .single()
+
+        setMentionsEnabled(settings?.allow_mentions !== false)
+      } catch (error) {
+        console.error("Error checking mentions permission:", error)
+        setMentionsEnabled(true) // Default to allowing mentions if there's an error
+      }
+    }
+
+    checkMentionsStatus()
+  }, [profile.id, supabase])
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -67,6 +94,21 @@ export function EnhancedCreatePost({ profile }: { profile: Profile }) {
   const removeImage = () => {
     setImage(null)
     setImagePreview(null)
+  }
+
+  const handleAIContentGenerated = (generatedContent: string, hashtags?: string[]) => {
+    let newContent = generatedContent
+
+    if (hashtags && hashtags.length > 0) {
+      newContent += "\n\n" + hashtags.map((tag) => (tag.startsWith("#") ? tag : `#${tag}`)).join(" ")
+    }
+
+    setContent(newContent)
+
+    toast({
+      title: "Content Generated",
+      description: "AI-generated content has been added to your post",
+    })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -102,10 +144,65 @@ export function EnhancedCreatePost({ profile }: { profile: Profile }) {
         imageUrl = publicUrl
       }
 
+      // Process mentions in content
+      let updatedContent = content
+      const mentionRegex = /@(\w+)/g
+      const mentions = content.match(mentionRegex) || []
+
+      // Extract usernames from mentions
+      const usernames = mentions.map((mention) => mention.substring(1))
+
+      // Check if mentioned users allow mentions
+      if (usernames.length > 0) {
+        const { data: mentionedUsers } = await supabase
+          .from("profiles")
+          .select("id, username")
+          .in("username", usernames)
+
+        if (mentionedUsers) {
+          // Get mention settings for these users
+          const mentionSettings = await Promise.all(
+            mentionedUsers.map(async (user) => {
+              const { data } = await supabase
+                .from("user_settings")
+                .select("allow_mentions")
+                .eq("user_id", user.id)
+                .single()
+
+              return {
+                userId: user.id,
+                username: user.username,
+                allowsMentions: data?.allow_mentions !== false,
+              }
+            }),
+          )
+
+          // Filter out users who don't allow mentions
+          const disallowedMentions = mentionSettings.filter((setting) => !setting.allowsMentions)
+
+          if (disallowedMentions.length > 0) {
+            // Warn about disallowed mentions
+            toast({
+              title: "Some mentions were removed",
+              description: `${disallowedMentions.map((m) => `@${m.username}`).join(", ")} ${
+                disallowedMentions.length === 1 ? "doesn't" : "don't"
+              } allow mentions.`,
+              variant: "warning",
+            })
+
+            // Remove disallowed mentions from content
+            disallowedMentions.forEach((mention) => {
+              const regex = new RegExp(`@${mention.username}\\b`, "g")
+              updatedContent = updatedContent.replace(regex, mention.username)
+            })
+          }
+        }
+      }
+
       // Create post
       const { error: postError } = await supabase.from("posts").insert({
         user_id: profile.id,
-        content: content.trim(),
+        content: updatedContent.trim(),
         image_url: imageUrl,
       })
 
@@ -135,21 +232,6 @@ export function EnhancedCreatePost({ profile }: { profile: Profile }) {
     } finally {
       setLoading(false)
     }
-  }
-
-  const handleAIContentGenerated = (generatedContent: string, hashtags?: string[]) => {
-    let newContent = generatedContent
-
-    if (hashtags && hashtags.length > 0) {
-      newContent += "\n\n" + hashtags.map((tag) => (tag.startsWith("#") ? tag : `#${tag}`)).join(" ")
-    }
-
-    setContent(newContent)
-
-    toast({
-      title: "Content Generated",
-      description: "AI-generated content has been added to your post",
-    })
   }
 
   const getInitials = () => {
@@ -185,11 +267,12 @@ export function EnhancedCreatePost({ profile }: { profile: Profile }) {
                 <AvatarFallback>{getInitials()}</AvatarFallback>
               </Avatar>
               <div className="flex-1">
-                <Textarea
+                <MentionInput
+                  value={content}
+                  onChange={setContent}
                   placeholder="What's on your mind?"
                   className="min-h-[100px] resize-none"
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
+                  disabled={!mentionsEnabled}
                 />
                 {imagePreview && (
                   <div className="relative mt-2">

@@ -1,10 +1,14 @@
 import { createClient } from "@/lib/supabase/server"
 import { notFound } from "next/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { canViewProfile } from "@/lib/privacy-utils"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Grid3X3, Bookmark, Settings, MessageSquare } from "lucide-react"
 import Link from "next/link"
+import { PrivateProfileMessage } from "@/components/profile/private-profile-message"
+import { showsActivityStatus, showsOnlineStatus } from "@/lib/privacy-utils"
+import { PrivacyIndicator } from "@/components/profile/privacy-indicator"
 
 export default async function ProfilePage({ params }: { params: { username: string } }) {
   const supabase = createClient()
@@ -20,6 +24,29 @@ export default async function ProfilePage({ params }: { params: { username: stri
 
   if (!profile) {
     notFound()
+  }
+
+  // Check if the current user can view this profile
+  const canView = await canViewProfile(session?.user?.id || null, profile.id)
+
+  const isOwnProfile = session?.user.id === profile.id
+
+  // If the profile is not viewable, show the PrivateProfileMessage component
+  if (!canView && !isOwnProfile) {
+    // Check if current user is following this profile
+    let isFollowing = false
+    if (session) {
+      const { data: followData } = await supabase
+        .from("follows")
+        .select("*")
+        .eq("follower_id", session.user.id)
+        .eq("following_id", profile.id)
+        .maybeSingle()
+
+      isFollowing = !!followData
+    }
+
+    return <PrivateProfileMessage profile={profile} isFollowing={isFollowing} currentUserId={session?.user?.id} />
   }
 
   // Get followers count
@@ -54,7 +81,11 @@ export default async function ProfilePage({ params }: { params: { username: stri
     .eq("user_id", profile.id)
     .order("created_at", { ascending: false })
 
-  const isOwnProfile = session?.user.id === profile.id
+  // Check if activity status should be shown
+  const showActivity = await showsActivityStatus(profile.id)
+
+  // Check if online status should be shown
+  const showOnline = await showsOnlineStatus(profile.id)
 
   return (
     <div className="max-w-4xl mx-auto px-4">
@@ -78,7 +109,14 @@ export default async function ProfilePage({ params }: { params: { username: stri
           {/* Profile info */}
           <div className="flex-1 text-center md:text-left">
             <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
-              <h1 className="text-xl font-light">{profile.username}</h1>
+              <h1 className="text-xl font-light">
+                {profile.username}
+                {isOwnProfile && (
+                  <span className="ml-2">
+                    <PrivacyIndicator visibility={profile.profile_visibility || "public"} />
+                  </span>
+                )}
+              </h1>
 
               {isOwnProfile ? (
                 <div className="flex gap-2">
@@ -94,6 +132,7 @@ export default async function ProfilePage({ params }: { params: { username: stri
               ) : (
                 <div className="flex gap-2">
                   <form action={`/api/profile/${profile.id}/follow`} method="POST">
+                    <input type="hidden" name="isFollowing" value={isFollowing.toString()} />
                     <Button variant={isFollowing ? "outline" : "default"} size="sm" className="font-semibold">
                       {isFollowing ? "Following" : "Follow"}
                     </Button>

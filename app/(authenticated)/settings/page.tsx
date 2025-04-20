@@ -4,7 +4,20 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useTheme } from "next-themes"
-import { Loader2, LogOut, Moon, Sun, User, Bell, Shield, HelpCircle, Info, Sparkles, Sliders } from "lucide-react"
+import {
+  Loader2,
+  LogOut,
+  Moon,
+  Sun,
+  User,
+  Bell,
+  Shield,
+  HelpCircle,
+  Info,
+  Sparkles,
+  Sliders,
+  UserCheck,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
@@ -161,6 +174,21 @@ export default function SettingsPage() {
             </div>
             <Button variant="ghost" size="sm" asChild>
               <Link href="/auth/update-password">Change</Link>
+            </Button>
+          </div>
+
+          <Separator />
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <UserCheck className="h-5 w-5 text-gray-500" />
+              <div>
+                <p className="font-medium">Follow Requests</p>
+                <p className="text-sm text-gray-500">Manage who can follow you</p>
+              </div>
+            </div>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/settings/follow-requests">Manage</Link>
             </Button>
           </div>
         </CardContent>
