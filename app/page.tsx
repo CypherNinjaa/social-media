@@ -149,10 +149,8 @@ export default function Home() {
               {/* Content column */}
               <div className="relative flex flex-col justify-center space-y-6 z-10">
                 <div className="space-y-4">
-                  <div className="inline-block rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1 mb-4">
-                    <span className="block bg-white dark:bg-gray-950 rounded-md px-3 py-1 text-sm font-medium">
-                      Welcome to SocialSphere
-                    </span>
+                  <div className="inline-block rounded-lg border border-gray-200 dark:border-gray-800 mb-4">
+                    <span className="block px-3 py-1 text-sm font-medium">Welcome to SocialSphere</span>
                   </div>
                   <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
                     Connect, Share, Engage with{" "}
@@ -188,10 +186,13 @@ export default function Home() {
 
               {/* Image column with floating animation */}
               <div className="relative mx-auto aspect-video overflow-hidden rounded-xl sm:w-full lg:order-last z-10">
-                <div className="h-full w-full bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 rounded-xl flex items-center justify-center shadow-2xl transform hover:scale-[1.02] transition-all duration-300 animate-float">
-                  <div className="relative">
-                    <div className="absolute -top-10 -left-10 w-20 h-20 bg-yellow-400 rounded-full opacity-70 blur-md"></div>
-                    <div className="absolute -bottom-10 -right-10 w-20 h-20 bg-pink-400 rounded-full opacity-70 blur-md"></div>
+                <div className="h-full w-full rounded-xl shadow-2xl transform hover:scale-[1.02] transition-all duration-300 animate-float relative overflow-hidden">
+                  <img
+                    src="/global-connections.png"
+                    alt="SocialSphere - Connect with people around the world"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-center justify-center">
                     <div className="text-white text-5xl font-bold drop-shadow-lg">SocialSphere</div>
                   </div>
                 </div>
