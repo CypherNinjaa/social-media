@@ -5,6 +5,7 @@ import { Suspense } from "react"
 import { MobileNavigation } from "@/components/layout/mobile-navigation"
 import { MobileHeader } from "@/components/layout/mobile-header"
 import { DesktopSidebar } from "@/components/layout/desktop-sidebar"
+import { NotificationProvider } from "@/components/providers/notification-provider"
 
 export default async function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
@@ -23,23 +24,29 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
     .eq("id", session.user.id)
     .single()
 
+  if (!profile) {
+    redirect("/auth")
+  }
+
   return (
-    <div className="min-h-screen flex">
-      {/* Desktop Sidebar */}
-      <DesktopSidebar userId={session.user.id} username={profile?.username} avatar={profile?.avatar_url} />
+    <NotificationProvider>
+      <div className="min-h-screen flex">
+        {/* Desktop Sidebar */}
+        <DesktopSidebar userId={session.user.id} username={profile?.username} avatar={profile?.avatar_url} />
 
-      {/* Mobile Header */}
-      <MobileHeader />
+        {/* Mobile Header */}
+        <MobileHeader />
 
-      {/* Main Content */}
-      <div className="flex-1 md:ml-[72px] lg:ml-[244px]">
-        <main className="min-h-screen pb-16 md:pb-0 mt-14 md:mt-0">
-          <Suspense>{children}</Suspense>
-        </main>
+        {/* Main Content */}
+        <div className="flex-1 md:ml-[72px] lg:ml-[244px]">
+          <main className="min-h-screen pb-16 md:pb-0 mt-14 md:mt-0">
+            <Suspense>{children}</Suspense>
+          </main>
+        </div>
+
+        {/* Mobile Navigation */}
+        <MobileNavigation userId={profile?.username || session.user.id} avatar={profile?.avatar_url} />
       </div>
-
-      {/* Mobile Navigation */}
-      <MobileNavigation userId={profile?.username || session.user.id} avatar={profile?.avatar_url} />
-    </div>
+    </NotificationProvider>
   )
 }

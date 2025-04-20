@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Home, Search, PlusSquare, Heart, User, Settings, LogOut } from "lucide-react"
+import { NotificationBell } from "@/components/notification/notification-bell"
 
 interface DesktopSidebarProps {
   userId: string
@@ -44,6 +45,7 @@ export function DesktopSidebar({ userId, username, avatar }: DesktopSidebarProps
       name: "Notifications",
       href: "/notifications",
       icon: Heart,
+      component: <NotificationBell />,
     },
     {
       name: "Profile",
@@ -90,9 +92,13 @@ export function DesktopSidebar({ userId, username, avatar }: DesktopSidebarProps
                       : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 group-hover:scale-110 transition-transform duration-200"
                   }`}
                 >
-                  <item.icon
-                    className={`h-5 w-5 ${isActive ? "animate-pulse-subtle" : "group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors"}`}
-                  />
+                  {item.component ? (
+                    item.component
+                  ) : (
+                    <item.icon
+                      className={`h-5 w-5 ${isActive ? "animate-pulse-subtle" : "group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors"}`}
+                    />
+                  )}
                 </div>
                 <span
                   className={`ml-3 hidden lg:inline-block relative ${

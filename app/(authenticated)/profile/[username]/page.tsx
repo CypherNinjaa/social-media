@@ -59,91 +59,99 @@ export default async function ProfilePage({ params }: { params: { username: stri
   return (
     <div className="max-w-4xl mx-auto px-4">
       {/* Profile header */}
-      <div className="py-8 flex flex-col md:flex-row items-center md:items-start gap-8">
-        {/* Profile picture */}
-        <div className="flex-shrink-0">
-          <Avatar className="h-20 w-20 md:h-36 md:w-36">
-            <AvatarImage src={profile.avatar_url || undefined} alt={profile.username} />
-            <AvatarFallback className="text-2xl">{profile.username.substring(0, 2).toUpperCase()}</AvatarFallback>
-          </Avatar>
-        </div>
+      <div className="py-8 flex flex-col md:flex-row items-center md:items-start gap-8 relative">
+        {/* Decorative background elements for mobile */}
+        <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-purple-500/10 to-transparent rounded-xl -z-10 md:hidden"></div>
+        <div className="absolute -top-4 -left-4 w-32 h-32 bg-blue-500/10 rounded-full blur-xl -z-10 md:hidden"></div>
+        <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-pink-500/10 rounded-full blur-xl -z-10 md:hidden"></div>
 
-        {/* Profile info */}
-        <div className="flex-1 text-center md:text-left">
-          <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
-            <h1 className="text-xl font-light">{profile.username}</h1>
-
-            {isOwnProfile ? (
-              <div className="flex gap-2">
-                <Link href="/settings">
-                  <Button variant="outline" size="sm" className="font-semibold">
-                    Edit profile
-                  </Button>
-                </Link>
-                <Link href="/settings">
-                  <Button variant="ghost" size="sm" className="font-semibold">
-                    <Settings className="h-4 w-4" />
-                  </Button>
-                </Link>
-              </div>
-            ) : (
-              <div className="flex gap-2">
-                <form action={`/api/profile/${profile.id}/follow`} method="POST">
-                  <Button variant={isFollowing ? "outline" : "default"} size="sm" className="font-semibold">
-                    {isFollowing ? "Following" : "Follow"}
-                  </Button>
-                </form>
-                <Link href={`/messages?user=${profile.id}`}>
-                  <Button variant="outline" size="sm" className="font-semibold">
-                    <MessageSquare className="h-4 w-4 mr-2" />
-                    Message
-                  </Button>
-                </Link>
-              </div>
-            )}
+        {/* Add a subtle card effect on mobile */}
+        <div className="w-full md:w-auto bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 md:p-0 shadow-sm md:shadow-none border border-gray-100 dark:border-gray-800 md:border-0 flex flex-col items-center md:items-start md:bg-transparent md:dark:bg-transparent md:backdrop-blur-none">
+          {/* Profile picture */}
+          <div className="flex-shrink-0">
+            <Avatar className="h-20 w-20 md:h-36 md:w-36">
+              <AvatarImage src={profile.avatar_url || undefined} alt={profile.username} />
+              <AvatarFallback className="text-2xl">{profile.username.substring(0, 2).toUpperCase()}</AvatarFallback>
+            </Avatar>
           </div>
 
-          {/* Stats */}
-          <div className="flex justify-center md:justify-start space-x-8 mb-4">
-            <Link
-              href={`/profile/${username}/posts`}
-              className="flex flex-col items-center md:items-start cursor-pointer hover:opacity-80 transition-opacity"
-            >
-              <span className="font-semibold">{posts?.length || 0}</span>{" "}
-              <span className="text-gray-500 dark:text-gray-400">posts</span>
-            </Link>
+          {/* Profile info */}
+          <div className="flex-1 text-center md:text-left">
+            <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
+              <h1 className="text-xl font-light">{profile.username}</h1>
 
-            <Link
-              href={`/profile/${username}/followers`}
-              className="flex flex-col items-center md:items-start cursor-pointer hover:opacity-80 transition-opacity"
-            >
-              <span className="font-semibold">{followersCount || 0}</span>{" "}
-              <span className="text-gray-500 dark:text-gray-400">followers</span>
-            </Link>
+              {isOwnProfile ? (
+                <div className="flex gap-2">
+                  <Link href="/settings">
+                    <Button variant="outline" size="sm" className="font-semibold">
+                      Edit profile
+                    </Button>
+                  </Link>
+                  <Link href="/settings">
+                    <Button variant="ghost" size="sm" className="font-semibold">
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <form action={`/api/profile/${profile.id}/follow`} method="POST">
+                    <Button variant={isFollowing ? "outline" : "default"} size="sm" className="font-semibold">
+                      {isFollowing ? "Following" : "Follow"}
+                    </Button>
+                  </form>
+                  <Link href={`/messages?user=${profile.id}`}>
+                    <Button variant="outline" size="sm" className="font-semibold">
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Message
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </div>
 
-            <Link
-              href={`/profile/${username}/following`}
-              className="flex flex-col items-center md:items-start cursor-pointer hover:opacity-80 transition-opacity"
-            >
-              <span className="font-semibold">{followingCount || 0}</span>{" "}
-              <span className="text-gray-500 dark:text-gray-400">following</span>
-            </Link>
-          </div>
-
-          {/* Bio */}
-          <div>
-            {profile.full_name && <p className="font-semibold">{profile.full_name}</p>}
-            {profile.bio && <p className="whitespace-pre-wrap">{profile.bio}</p>}
-            {profile.website && (
-              <a
-                href={profile.website.startsWith("http") ? profile.website : `https://${profile.website}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-900 dark:text-blue-400 font-semibold"
+            {/* Stats */}
+            <div className="flex justify-center md:justify-start space-x-8 mb-4">
+              <Link
+                href={`/profile/${username}/posts`}
+                className="flex flex-col items-center md:items-start cursor-pointer hover:opacity-80 transition-opacity"
               >
-                {profile.website.replace(/^https?:\/\//, "")}
-              </a>
-            )}
+                <span className="font-semibold">{posts?.length || 0}</span>{" "}
+                <span className="text-gray-500 dark:text-gray-400">posts</span>
+              </Link>
+
+              <Link
+                href={`/profile/${username}/followers`}
+                className="flex flex-col items-center md:items-start cursor-pointer hover:opacity-80 transition-opacity"
+              >
+                <span className="font-semibold">{followersCount || 0}</span>{" "}
+                <span className="text-gray-500 dark:text-gray-400">followers</span>
+              </Link>
+
+              <Link
+                href={`/profile/${username}/following`}
+                className="flex flex-col items-center md:items-start cursor-pointer hover:opacity-80 transition-opacity"
+              >
+                <span className="font-semibold">{followingCount || 0}</span>{" "}
+                <span className="text-gray-500 dark:text-gray-400">following</span>
+              </Link>
+            </div>
+
+            {/* Bio */}
+            <div>
+              {profile.full_name && <p className="font-semibold">{profile.full_name}</p>}
+              {profile.bio && <p className="whitespace-pre-wrap">{profile.bio}</p>}
+              {profile.website && (
+                <a
+                  href={profile.website.startsWith("http") ? profile.website : `https://${profile.website}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-900 dark:text-blue-400 font-semibold"
+                >
+                  {profile.website.replace(/^https?:\/\//, "")}
+                </a>
+              )}
+            </div>
           </div>
         </div>
       </div>

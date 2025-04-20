@@ -1,8 +1,30 @@
+"use client"
+
 import { createClient } from "@/lib/supabase/server"
-import { redirect } from "next/navigation"
+import { redirect, useRouter } from "next/navigation"
 import { PostCard } from "@/components/post/post-card"
 import { SuggestedUsers } from "@/components/user/suggested-users"
-import Link from "next/link"
+import { createClient as createClientComponent } from "@/lib/supabase/client"
+
+function LogoutButton() {
+  const router = useRouter()
+  const supabase = createClientComponent()
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push("/auth")
+    router.refresh()
+  }
+
+  return (
+    <button
+      onClick={handleLogout}
+      className="text-xs font-semibold text-blue-500 hover:text-blue-700 hover:underline transition-colors"
+    >
+      Switch
+    </button>
+  )
+}
 
 export default async function FeedPage() {
   const supabase = createClient()
@@ -119,9 +141,7 @@ export default async function FeedPage() {
                   <p className="text-sm text-gray-500 dark:text-gray-400">{profile.full_name || ""}</p>
                 </div>
               </div>
-              <Link href="/auth" className="text-xs font-semibold text-blue-500 hover:underline">
-                Switch
-              </Link>
+              <LogoutButton />
             </div>
 
             {/* Suggested users */}
