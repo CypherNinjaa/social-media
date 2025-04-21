@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { FollowButton } from "@/components/profile/follow-button"
 
 interface User {
   id: string
@@ -10,9 +11,10 @@ interface User {
 
 interface SuggestedUsersProps {
   users: User[]
+  currentUserId: string
 }
 
-export function SuggestedUsers({ users }: SuggestedUsersProps) {
+export function SuggestedUsers({ users, currentUserId }: SuggestedUsersProps) {
   if (!users.length) return null
 
   return (
@@ -35,7 +37,7 @@ export function SuggestedUsers({ users }: SuggestedUsersProps) {
                 <p className="text-xs text-gray-500 dark:text-gray-400">{user.full_name || "Suggested for you"}</p>
               </div>
             </Link>
-            <button className="text-xs font-semibold text-blue-500">Follow</button>
+            <FollowButton profileId={user.id} isFollowing={false} currentUserId={currentUserId} />
           </div>
         ))}
       </div>

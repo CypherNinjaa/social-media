@@ -123,7 +123,7 @@ export default function Home() {
           </nav>
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden z-10 p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            className="md:hidden z-10 p-2 rounded-full bg-white dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
             aria-expanded={isMenuOpen}
             aria-label="Toggle mobile menu"
           >
@@ -159,19 +159,27 @@ export default function Home() {
             <nav className="flex flex-col gap-6 items-center py-8">
               <Link
                 href="#features"
-                className="text-lg font-medium relative group"
+                className="text-lg font-medium relative group hover:bg-gray-100 dark:hover:bg-gray-800"
                 onClick={() => setIsMenuOpen(false)}
               >
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400 group-hover:from-pink-500 group-hover:to-purple-500 transition-all duration-300">
                   Features
                 </span>
               </Link>
-              <Link href="#about" className="text-lg font-medium relative group" onClick={() => setIsMenuOpen(false)}>
+              <Link
+                href="#about"
+                className="text-lg font-medium relative group hover:bg-gray-100 dark:hover:bg-gray-800"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400 group-hover:from-purple-500 group-hover:to-blue-500 transition-all duration-300">
                   About
                 </span>
               </Link>
-              <Link href="/auth" className="text-lg font-medium relative group" onClick={() => setIsMenuOpen(false)}>
+              <Link
+                href="/auth"
+                className="text-lg font-medium relative group hover:bg-gray-100 dark:hover:bg-gray-800"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400 group-hover:from-blue-500 group-hover:to-teal-500 transition-all duration-300">
                   Sign In
                 </span>
@@ -556,29 +564,6 @@ export default function Home() {
                     className="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400"
                   >
                     Contact Us
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Legal links */}
-            <div>
-              <h4 className="font-semibold text-lg mb-4">Legal</h4>
-              <ul className="space-y-3">
-                <li>
-                  <Link
-                    href="/privacy"
-                    className="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400"
-                  >
-                    Privacy Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/terms"
-                    className="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400"
-                  >
-                    Terms of Service
                   </Link>
                 </li>
               </ul>

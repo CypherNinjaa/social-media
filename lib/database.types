@@ -165,9 +165,149 @@ export interface Database {
           created_at?: string
         }
       }
+      conversations: {
+        Row: {
+          id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      conversation_participants: {
+        Row: {
+          id: string
+          conversation_id: string
+          user_id: string
+          created_at: string
+          last_read_at: string
+        }
+        Insert: {
+          id?: string
+          conversation_id: string
+          user_id: string
+          created_at?: string
+          last_read_at?: string
+        }
+        Update: {
+          id?: string
+          conversation_id?: string
+          user_id?: string
+          created_at?: string
+          last_read_at?: string
+        }
+      }
+      messages: {
+        Row: {
+          id: string
+          conversation_id: string
+          sender_id: string | null
+          content: string | null
+          is_edited: boolean
+          is_deleted: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          conversation_id: string
+          sender_id?: string | null
+          content?: string | null
+          is_edited?: boolean
+          is_deleted?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          conversation_id?: string
+          sender_id?: string | null
+          content?: string | null
+          is_edited?: boolean
+          is_deleted?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      message_reactions: {
+        Row: {
+          id: string
+          message_id: string
+          user_id: string
+          reaction: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          message_id: string
+          user_id: string
+          reaction: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          message_id?: string
+          user_id?: string
+          reaction?: string
+          created_at?: string
+        }
+      }
     }
     Functions: {
-      [_ in never]: never
+      get_or_create_conversation: {
+        Args: {
+          user1_id: string
+          user2_id: string
+        }
+        Returns: string
+      }
+      update_last_read: {
+        Args: {
+          conversation_id_param: string
+          user_id_param: string
+        }
+        Returns: undefined
+      }
+      search_messages: {
+        Args: {
+          search_query: string
+          user_id_param: string
+        }
+        Returns: {
+          message_id: string
+          conversation_id: string
+          sender_id: string
+          content: string
+          created_at: string
+          is_edited: boolean
+          is_deleted: boolean
+          sender_username: string
+          sender_avatar_url: string
+        }[]
+      }
+      search_posts: {
+        Args: {
+          search_query: string
+        }
+        Returns: {
+          id: string
+          user_id: string
+          content: string
+          created_at: string
+          updated_at: string
+          image_url: string | null
+          rank: number
+          headline: string
+        }[]
+      }
     }
   }
 }

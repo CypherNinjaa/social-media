@@ -40,7 +40,7 @@ export function FollowRequests() {
           id,
           requester_id,
           created_at,
-          profiles:requester_id(username, avatar_url, full_name)
+          profiles:profiles(username, avatar_url, full_name)
         `)
         .eq("status", "pending")
         .order("created_at", { ascending: false })
